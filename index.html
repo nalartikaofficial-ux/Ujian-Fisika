@@ -3,35 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Portal Ujian Fisika XII - Asesmen Harian</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Asesmen Fisika XII - Ujian Digital</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- jsPDF CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .canvas-container { touch-action: none; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between select-none">
+<body class="bg-slate-200 text-slate-900 min-h-screen flex flex-col justify-between select-none">
 
   <!-- HEADER -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 px-4 py-3 shadow-sm">
+  <header class="bg-slate-800 text-white border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow">
           ⚡
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight text-slate-900">Asesmen Harian Fisika XII</h1>
-          <p class="text-xs text-slate-500 font-medium">Listrik Statis & Dinamis • Kelas XII-1</p>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">Asesmen Akhir Fisika XII</h1>
+          <p class="text-xs text-slate-300">Pengampu: Fadhillah Umar, S.Pd. • <span id="header-packet" class="font-bold text-amber-300">Kelas XII-1</span></p>
         </div>
       </div>
 
-      <!-- TIMER -->
-      <div id="timer-box" class="hidden items-center space-x-2 bg-slate-900 text-white px-3.5 py-1.5 rounded-xl shadow">
-        <span class="text-amber-400">⏱️</span>
-        <span id="timer-display" class="font-mono text-sm sm:text-base font-bold text-amber-300">60:00</span>
+      <!-- TIMER & CHEAT BADGE -->
+      <div class="flex items-center space-x-2">
+        <div id="cheat-badge" class="hidden items-center bg-rose-900/80 border border-rose-500 px-2.5 py-1 rounded-lg text-xs text-rose-200 font-bold animate-pulse">
+          ⚠️ Peringatan Tab: <span id="cheat-count-display" class="ml-1 text-white">0</span>/3
+        </div>
+        <div id="timer-box" class="hidden items-center space-x-2 bg-slate-900 px-3.5 py-1.5 rounded-xl border border-slate-700">
+          <span class="text-amber-400">⏱️</span>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-bold text-amber-300">60:00</span>
+        </div>
       </div>
     </div>
   </header>
@@ -39,65 +42,71 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl mx-auto w-full p-3 sm:p-4 flex-1 flex flex-col justify-center">
 
-    <!-- STEP 1: IDENTITAS & TOKEN -->
-    <section id="step-identity" class="max-w-md mx-auto w-full bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl my-auto">
+    <!-- STEP 1: LOGIN IDENTITAS & TOKEN -->
+    <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-100 p-6 sm:p-8 rounded-3xl border-2 border-slate-300 shadow-xl my-auto">
       <div class="text-center mb-6">
-        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-100">CBT Digital Essay</span>
-        <h2 class="text-2xl font-black mt-3 text-slate-900">Portal Masuk Ujian</h2>
-        <p class="text-slate-500 text-xs mt-1">Masukkan nama lengkap dan token akses ujian.</p>
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full border border-indigo-200">Asesmen Standar UAS (5 Paket Setara)</span>
+        <h2 class="text-2xl font-black mt-3 text-slate-900">Identitas Siswa</h2>
+        <p class="text-slate-600 text-xs mt-1">Paket soal ditentukan otomatis secara adil berdasarkan nomor absen.</p>
       </div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap Siswa</label>
-          <input type="text" id="student-name" placeholder="Contoh: Muhammad Raihan" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">Nama Lengkap Siswa</label>
+          <input type="text" id="student-name" placeholder="Nama lengkap sesuai absensi" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Kelas</label>
+            <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+              <option value="XII-1">XII-1</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Nomor Absen</label>
+            <input type="number" id="student-nis" placeholder="Nomor Absen (1-36)" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+          </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Kelas</label>
-          <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
-            <option value="XII-1">XII-1</option>
-          </select>
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">Token Ujian</label>
+          <input type="text" id="exam-token" placeholder="Masukkan TOKEN (cth: FISIKA12)" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-mono uppercase font-bold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Token Akses Ujian</label>
-          <input type="text" id="exam-token" placeholder="Masukkan TOKEN (cth: FISIKA12)" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm font-mono uppercase focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
-        </div>
-
-        <div class="pt-3">
-          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 font-bold text-sm rounded-xl shadow-lg shadow-indigo-200 transition active:scale-95 text-white flex items-center justify-center space-x-2">
-            <span>Mulai Pengerjaan Ujian</span>
+        <div class="pt-2">
+          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 font-bold text-sm rounded-xl shadow-lg transition active:scale-95 text-white flex items-center justify-center space-x-2">
+            <span>Masuk & Kerjakan Ujian</span>
             <span>➔</span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- STEP 2: UJIAN & WHITEBOARD POLOS -->
+    <!-- STEP 2: INTERFACE UJIAN & WHITEBOARD POLOS -->
     <section id="step-exam" class="hidden flex-col lg:flex-row gap-5 my-auto">
       
-      <!-- KIRI: SOAL -->
-      <div class="lg:w-5/12 flex flex-col justify-between bg-white p-5 rounded-3xl border border-slate-200 shadow-md space-y-4">
+      <!-- KIRI: SOAL & INPUT HASIL AKHIR -->
+      <div class="lg:w-5/12 flex flex-col justify-between bg-slate-100 p-5 rounded-3xl border-2 border-slate-300 shadow-md space-y-4">
         <div>
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-            <span id="soal-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg">Soal 1 dari 5</span>
-            <span id="materi-badge" class="text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md font-bold border border-amber-200">Topik: Gaya Listrik</span>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-3 mb-3">
+            <span id="soal-badge" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-lg shadow-sm">Soal 1 dari 5</span>
+            <span id="materi-badge" class="text-xs text-amber-900 bg-amber-100 px-2.5 py-1 rounded-md font-bold border border-amber-300">Topik: Gaya Listrik</span>
           </div>
 
-          <div class="min-h-[140px] bg-slate-50 p-4 rounded-2xl border border-slate-200">
-            <p id="question-text" class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed"></p>
+          <div class="min-h-[160px] bg-white p-4 rounded-2xl border border-slate-300 shadow-sm">
+            <p id="question-text" class="text-sm font-semibold text-slate-900 leading-relaxed"></p>
           </div>
 
           <div class="mt-4">
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Hasil Akhir (Opsional):</label>
-            <input type="text" id="final-answer-input" oninput="saveCurrentQuestionState()" placeholder="Contoh: F = 1.2 N (Tarik-menarik)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900">
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Hasil Akhir Perhitungan (Wajib Diisi):</label>
+            <input type="text" id="final-answer-input" oninput="saveCurrentQuestionState()" placeholder="Tulis jawaban akhir lengkap dengan satuan" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm font-bold focus:outline-none focus:border-indigo-600 text-slate-900">
           </div>
         </div>
 
         <!-- NAVIGASI NOMOR -->
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-          <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed text-slate-700">
+        <div class="pt-3 border-t border-slate-300 flex items-center justify-between gap-2">
+          <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-300 hover:bg-slate-400 text-xs font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-slate-800">
             ⬅ Sebelumnya
           </button>
           
@@ -109,40 +118,40 @@
         </div>
       </div>
 
-      <!-- KANAN: PAPAN CORET PUTIH POLOS -->
-      <div class="lg:w-7/12 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-md flex flex-col">
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 text-xs">
+      <!-- KANAN: PAPAN CORET SKETSA & RUMUS -->
+      <div class="lg:w-7/12 bg-slate-100 p-4 sm:p-5 rounded-3xl border-2 border-slate-300 shadow-md flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-300 text-xs">
           <div class="flex items-center space-x-2">
-            <span class="font-bold text-slate-800">✍️ Papan Coret Rumus</span>
-            <span class="text-[11px] text-slate-500 hidden sm:inline">(Tersimpan per nomor)</span>
+            <span class="font-bold text-slate-900">✍️ Sketsa & Langkah Pengerjaan</span>
+            <span class="text-[11px] text-slate-600 hidden sm:inline">(Tersimpan per nomor)</span>
           </div>
 
-          <!-- TOOLBAR -->
+          <!-- TOOLBAR WHITEBOARD -->
           <div class="flex items-center space-x-1.5 sm:space-x-2">
             <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs">Pena</button>
-            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">Penghapus</button>
+            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs">Penghapus</button>
             
-            <div class="flex items-center space-x-1.5 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
+            <div class="flex items-center space-x-1.5 bg-white px-2 py-1 rounded-lg border border-slate-300">
               <button onclick="setColor('#0f172a')" class="w-4 h-4 rounded-full bg-slate-900 border border-slate-400" title="Hitam"></button>
-              <button onclick="setColor('#2563eb')" class="w-4 h-4 rounded-full bg-blue-600" title="Biru"></button>
-              <button onclick="setColor('#dc2626')" class="w-4 h-4 rounded-full bg-red-600" title="Merah"></button>
+              <button onclick="setColor('#1d4ed8')" class="w-4 h-4 rounded-full bg-blue-700" title="Biru"></button>
+              <button onclick="setColor('#b91c1c')" class="w-4 h-4 rounded-full bg-red-700" title="Merah"></button>
             </div>
 
-            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 font-bold text-xs">Reset</button>
+            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-100 border border-rose-300 text-rose-800 hover:bg-rose-200 font-bold text-xs">Reset</button>
           </div>
         </div>
 
-        <!-- CANVAS AREA POLOS -->
-        <div class="relative w-full flex-1 bg-white rounded-2xl border border-slate-300 overflow-hidden canvas-container min-h-[380px] flex items-center justify-center">
+        <!-- CANVAS WHITEBOARD AREA -->
+        <div class="relative w-full flex-1 bg-white rounded-2xl border-2 border-slate-300 overflow-hidden canvas-container min-h-[380px] flex items-center justify-center shadow-inner">
           <canvas id="whiteboard" class="w-full h-full cursor-crosshair"></canvas>
-          <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-slate-400 bg-white/90 px-2 py-1 rounded border border-slate-200">
-            Tulis langkah rumus & hitungan di sini
+          <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-slate-500 bg-white/95 px-2 py-1 rounded border border-slate-300 shadow-sm font-medium">
+            Gambarkan sketsa rangkaian / arah garis gaya dan turunkan rumus di sini
           </div>
         </div>
 
         <div class="mt-4 flex items-center justify-between">
-          <span class="text-[11px] text-emerald-600 font-semibold flex items-center">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Auto-save aktif
+          <span class="text-[11px] text-emerald-700 font-bold flex items-center">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-pulse"></span> Auto-save tersimpan
           </span>
           <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs sm:text-sm font-bold shadow-md transition text-white">
             Kirim Lembar Jawaban Ujian ➔
@@ -151,73 +160,101 @@
       </div>
     </section>
 
-    <!-- STEP 3: HASIL SELESAI -->
-    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-white p-7 sm:p-10 rounded-3xl border border-slate-200 shadow-xl text-center my-auto">
-      <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100 mx-auto flex items-center justify-center text-3xl mb-4">
-        ✨
+    <!-- STEP 3: HALAMAN SELESAI -->
+    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-slate-100 p-7 sm:p-10 rounded-3xl border-2 border-slate-300 shadow-xl text-center my-auto">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl border border-emerald-300 mx-auto flex items-center justify-center text-3xl mb-4">
+        ✓
       </div>
       <h2 class="text-xl sm:text-2xl font-black text-slate-900">Selamat, Anda Telah Mengerjakan!</h2>
-      <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-        Seluruh lembar pengerjaan dan coretan rumus Anda telah berhasil terekam ke sistem guru. Berdoalah supaya hasil nilainya maksimal!
+      <p class="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed font-medium">
+        Seluruh lembar pengerjaan dan coretan sketsa rumus Anda telah berhasil terekam ke database guru mata pelajaran. Berdoalah supaya hasil nilainya maksimal!
       </p>
 
-      <div class="my-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2 text-slate-700">
+      <div class="my-6 p-4 rounded-2xl bg-white border border-slate-300 text-left text-xs space-y-2 text-slate-800 shadow-sm">
         <div><strong class="text-slate-500">Nama Lengkap:</strong> <span id="res-name" class="font-bold text-slate-900"></span></div>
-        <div><strong class="text-slate-500">Kelas:</strong> <span id="res-class" class="font-bold text-slate-900"></span></div>
-        <div><strong class="text-slate-500">Status Soal Terisi:</strong> <span id="res-answered" class="font-bold text-emerald-600"></span></div>
+        <div><strong class="text-slate-500">Kelas / Absen:</strong> <span id="res-class" class="font-bold text-slate-900"></span></div>
+        <div><strong class="text-slate-500">Paket Soal:</strong> <span id="res-packet" class="font-bold text-indigo-700"></span></div>
+        <div><strong class="text-slate-500">Status Pengerjaan:</strong> <span id="res-answered" class="font-bold text-emerald-700"></span></div>
+        <div><strong class="text-slate-500">Total Pelanggaran Tab:</strong> <span id="res-cheat" class="font-bold text-rose-600"></span></div>
         <div><strong class="text-slate-500">Waktu Pengiriman:</strong> <span id="res-time" class="font-bold text-slate-900"></span></div>
       </div>
 
       <div class="space-y-3">
         <button onclick="downloadPDFBackup()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-900 font-bold text-xs rounded-xl text-white shadow transition flex items-center justify-center space-x-2">
-          <span>📄 Unduh Dokumen PDF Jawaban (Cadangan Siswa)</span>
+          <span>📄 Unduh Dokumen PDF Jawaban (Arsip Cadangan)</span>
         </button>
       </div>
     </section>
 
+    <!-- STEP 4: BLOKIR AKSES JIKA SUDAH PERNAH SUBMIT -->
+    <section id="step-blocked" class="hidden max-w-md mx-auto w-full bg-slate-100 p-8 rounded-3xl border-2 border-rose-300 shadow-xl text-center my-auto">
+      <div class="w-16 h-16 bg-rose-100 text-rose-700 rounded-2xl border border-rose-300 mx-auto flex items-center justify-center text-3xl mb-4">
+        🔒
+      </div>
+      <h2 class="text-xl font-black text-slate-900">Akses Ujian Ditutup</h2>
+      <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+        Siswa dengan identitas ini tercatat telah menyelesaikan dan mengirimkan ujian ke sistem. Pengulangan ujian tidak diizinkan.
+      </p>
+      <div class="mt-5 p-3 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700" id="block-student-info"></div>
+    </section>
+
   </main>
 
-  <!-- LOGIC SCRIPT -->
+  <!-- SCRIPT ENGINE -->
   <script>
     const VALID_TOKEN = "FISIKA12";
 
-    const questions = [
-      {
-        id: 1,
-        topic: "Gaya Listrik (Hukum Coulomb)",
-        text: "Dua muatan titik q₁ = +6 μC dan q₂ = -2 μC terpisah sejauh 30 cm di udara. Tentukan besar gaya tarik-menarik antara kedua muatan tersebut! (Gunakan k = 9 × 10⁹ N·m²/C²)"
-      },
-      {
-        id: 2,
-        topic: "Medan Listrik",
-        text: "Sebuah titik P berjarak 30 cm dari muatan sumber Q = +9 μC di udara. Hitunglah besar kuat medan listrik di titik P serta tentukan arah vektor medannya!"
-      },
-      {
-        id: 3,
-        topic: "Kapasitor (Rangkaian Seri)",
-        text: "Dua buah kapasitor C₁ = 6 μF dan C₂ = 3 μF dirangkai secara seri dan dihubungkan dengan sumber tegangan 18 Volt. Hitung kapasitas total rangkaian dan muatan total yang tersimpan!"
-      },
-      {
-        id: 4,
-        topic: "Kapasitor (Rangkaian Paralel & Energi)",
-        text: "Dua kapasitor C₁ = 4 μF dan C₂ = 6 μF dirangkai paralel lalu dihubungkan dengan tegangan sumber 10 Volt. Tentukan kapasitas pengganti total serta total energi listrik yang tersimpan!"
-      },
-      {
-        id: 5,
-        topic: "Hukum Ohm & Rangkaian Resistor",
-        text: "Tiga resistor R₁ = 6 Ω, R₂ = 12 Ω, dan R₃ = 4 Ω disusun paralel dan dihubungkan pada tegangan 12 Volt. Tentukan hambatan total (Rp) serta arus listrik total yang keluar dari sumber tegangan!"
-      }
-    ];
+    // 5 PAKET SOAL STANDARISASI SETARA
+    const questionPackets = {
+      "Paket A": [
+        { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +4 μC dan q₂ = +9 μC terpisah pada jarak 50 cm di udara. Sebuah muatan uji q₃ = -2 μC diletakkan di antara kedua muatan pada garis hubungnya sedemikian rupa sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
+        { id: 2, topic: "Medan Listrik (Perbandingan Jarak)", text: "Titik A dan titik B berada segaris dari sebuah muatan sumber titik Q. Kuat medan listrik di titik A adalah 180 N/C pada jarak r dari muatan sumber, sedangkan jarak titik B adalah 3r dari muatan sumber. Hitunglah besar kuat medan listrik di titik B serta tentukan selisih kuat medan listrik antara titik A dan titik B!" },
+        { id: 3, topic: "Kapasitor (Kombinasi Seri-Paralel)", text: "Tiga buah kapasitor masing-masing C₁ = 6 μF, C₂ = 6 μF dirangkai secara paralel, kemudian kombinasi paralel tersebut dirangkai secara seri dengan C₃ = 6 μF. Rangkaian total dihubungkan dengan sumber tegangan 36 Volt. Hitunglah kapasitas pengganti total (C_total) serta muatan yang tersimpan pada kapasitor C₃!" },
+        { id: 4, topic: "Kapasitor (Tegangan & Energi Seri)", text: "Dua kapasitor C₁ = 3 μF dan C₂ = 6 μF dirangkai secara seri lalu dihubungkan dengan sumber tegangan 18 Volt. Hitunglah tegangan pada kapasitor C₁ (V₁) serta hitung perbandingan energi listrik yang tersimpan pada C₁ dan C₂ (W₁ : W₂)!" },
+        { id: 5, topic: "Hukum Ohm & Resistor Campuran", text: "R₁ = 6 Ω dirangkai seri dengan kombinasi paralel dua cabang: cabang atas (R₂ = 4 Ω seri R₃ = 8 Ω) dan cabang bawah (R₄ = 6 Ω). Rangkaian dihubungkan pada baterai 18 Volt dengan hambatan dalam r = 1 Ω. Gambarkan sketsa rangkaiannya, hitung hambatan pengganti total, serta hitung kuat arus yang melewati resistor R₂!" }
+      ],
+      "Paket B": [
+        { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +1 μC dan q₂ = +9 μC terpisah pada jarak 40 cm di udara. Sebuah muatan uji q₃ = -3 μC diletakkan di antara kedua muatan pada garis hubungnya sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
+        { id: 2, topic: "Medan Listrik (Perbandingan Jarak)", text: "Titik A dan titik B berada segaris dari sebuah muatan sumber titik Q. Kuat medan listrik di titik A adalah 200 N/C pada jarak r dari muatan sumber, sedangkan jarak titik B adalah 2r dari muatan sumber. Hitunglah besar kuat medan listrik di titik B serta tentukan selisih kuat medan listrik antara titik A dan titik B!" },
+        { id: 3, topic: "Kapasitor (Kombinasi Seri-Paralel)", text: "Tiga buah kapasitor masing-masing C₁ = 4 μF, C₂ = 8 μF dirangkai secara paralel, kemudian kombinasi paralel tersebut dirangkai secara seri dengan C₃ = 6 μF. Rangkaian total dihubungkan dengan sumber tegangan 30 Volt. Hitunglah kapasitas pengganti total (C_total) serta muatan yang tersimpan pada kapasitor C₃!" },
+        { id: 4, topic: "Kapasitor (Tegangan & Energi Seri)", text: "Dua kapasitor C₁ = 2 μF dan C₂ = 6 μF dirangkai secara seri lalu dihubungkan dengan sumber tegangan 24 Volt. Hitunglah tegangan pada kapasitor C₁ (V₁) serta hitung perbandingan energi listrik yang tersimpan pada C₁ dan C₂ (W₁ : W₂)!" },
+        { id: 5, topic: "Hukum Ohm & Resistor Campuran", text: "R₁ = 5 Ω dirangkai seri dengan kombinasi paralel dua cabang: cabang atas (R₂ = 3 Ω seri R₃ = 9 Ω) dan cabang bawah (R₄ = 6 Ω). Rangkaian dihubungkan pada baterai 20 Volt dengan hambatan dalam r = 1 Ω. Gambarkan sketsa rangkaiannya, hitung hambatan pengganti total, serta hitung kuat arus yang melewati resistor R₂!" }
+      ],
+      "Paket C": [
+        { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +9 μC dan q₂ = +16 μC terpisah pada jarak 70 cm di udara. Sebuah muatan uji q₃ = -5 μC diletakkan di antara kedua muatan pada garis hubungnya sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
+        { id: 2, topic: "Medan Listrik (Perbandingan Jarak)", text: "Titik A dan titik B berada segaris dari sebuah muatan sumber titik Q. Kuat medan listrik di titik A adalah 320 N/C pada jarak r dari muatan sumber, sedangkan jarak titik B adalah 4r dari muatan sumber. Hitunglah besar kuat medan listrik di titik B serta tentukan selisih kuat medan listrik antara titik A dan titik B!" },
+        { id: 3, topic: "Kapasitor (Kombinasi Seri-Paralel)", text: "Tiga buah kapasitor masing-masing C₁ = 10 μF, C₂ = 10 μF dirangkai secara paralel, kemudian kombinasi paralel tersebut dirangkai secara seri dengan C₃ = 5 μF. Rangkaian total dihubungkan dengan sumber tegangan 25 Volt. Hitunglah kapasitas pengganti total (C_total) serta muatan yang tersimpan pada kapasitor C₃!" },
+        { id: 4, topic: "Kapasitor (Tegangan & Energi Seri)", text: "Dua kapasitor C₁ = 4 μF dan C₂ = 12 μF dirangkai secara seri lalu dihubungkan dengan sumber tegangan 20 Volt. Hitunglah tegangan pada kapasitor C₁ (V₁) serta hitung perbandingan energi listrik yang tersimpan pada C₁ dan C₂ (W₁ : W₂)!" },
+        { id: 5, topic: "Hukum Ohm & Resistor Campuran", text: "R₁ = 7 Ω dirangkai seri dengan kombinasi paralel dua cabang: cabang atas (R₂ = 5 Ω seri R₃ = 7 Ω) dan cabang bawah (R₄ = 6 Ω). Rangkaian dihubungkan pada baterai 24 Volt dengan hambatan dalam r = 1 Ω. Gambarkan sketsa rangkaiannya, hitung hambatan pengganti total, serta hitung kuat arus yang melewati resistor R₂!" }
+      ],
+      "Paket D": [
+        { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +4 μC dan q₂ = +16 μC terpisah pada jarak 60 cm di udara. Sebuah muatan uji q₃ = -1 μC diletakkan di antara kedua muatan pada garis hubungnya sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
+        { id: 2, topic: "Medan Listrik (Perbandingan Jarak)", text: "Titik A dan titik B berada segaris dari sebuah muatan sumber titik Q. Kuat medan listrik di titik A adalah 270 N/C pada jarak r dari muatan sumber, sedangkan jarak titik B adalah 3r dari muatan sumber. Hitunglah besar kuat medan listrik di titik B serta tentukan selisih kuat medan listrik antara titik A dan titik B!" },
+        { id: 3, topic: "Kapasitor (Kombinasi Seri-Paralel)", text: "Tiga buah kapasitor masing-masing C₁ = 8 μF, C₂ = 8 μF dirangkai secara paralel, kemudian kombinasi paralel tersebut dirangkai secara seri dengan C₃ = 16 μF. Rangkaian total dihubungkan dengan sumber tegangan 30 Volt. Hitunglah kapasitas pengganti total (C_total) serta muatan yang tersimpan pada kapasitor C₃!" },
+        { id: 4, topic: "Kapasitor (Tegangan & Energi Seri)", text: "Dua kapasitor C₁ = 5 μF dan C₂ = 15 μF dirangkai secara seri lalu dihubungkan dengan sumber tegangan 24 Volt. Hitunglah tegangan pada kapasitor C₁ (V₁) serta hitung perbandingan energi listrik yang tersimpan pada C₁ dan C₂ (W₁ : W₂)!" },
+        { id: 5, topic: "Hukum Ohm & Resistor Campuran", text: "R₁ = 8 Ω dirangkai seri dengan kombinasi paralel dua cabang: cabang atas (R₂ = 6 Ω seri R₃ = 6 Ω) dan cabang bawah (R₄ = 4 Ω). Rangkaian dihubungkan pada baterai 24 Volt dengan hambatan dalam r = 1 Ω. Gambarkan sketsa rangkaiannya, hitung hambatan pengganti total, serta hitung kuat arus yang melewati resistor R₂!" }
+      ],
+      "Paket E": [
+        { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +16 μC dan q₂ = +25 μC terpisah pada jarak 90 cm di udara. Sebuah muatan uji q₃ = -4 μC diletakkan di antara kedua muatan pada garis hubungnya sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
+        { id: 2, topic: "Medan Listrik (Perbandingan Jarak)", text: "Titik A dan titik B berada segaris dari sebuah muatan sumber titik Q. Kuat medan listrik di titik A adalah 450 N/C pada jarak r dari muatan sumber, sedangkan jarak titik B adalah 3r dari muatan sumber. Hitunglah besar kuat medan listrik di titik B serta tentukan selisih kuat medan listrik antara titik A dan titik B!" },
+        { id: 3, topic: "Kapasitor (Kombinasi Seri-Paralel)", text: "Tiga buah kapasitor masing-masing C₁ = 12 μF, C₂ = 12 μF dirangkai secara paralel, kemudian kombinasi paralel tersebut dirangkai secara seri dengan C₃ = 8 μF. Rangkaian total dihubungkan dengan sumber tegangan 36 Volt. Hitunglah kapasitas pengganti total (C_total) serta muatan yang tersimpan pada kapasitor C₃!" },
+        { id: 4, topic: "Kapasitor (Tegangan & Energi Seri)", text: "Dua kapasitor C₁ = 6 μF dan C₂ = 18 μF dirangkai secara seri lalu dihubungkan dengan sumber tegangan 32 Volt. Hitunglah tegangan pada kapasitor C₁ (V₁) serta hitung perbandingan energi listrik yang tersimpan pada C₁ dan C₂ (W₁ : W₂)!" },
+        { id: 5, topic: "Hukum Ohm & Resistor Campuran", text: "R₁ = 4 Ω dirangkai seri dengan kombinasi paralel dua cabang: cabang atas (R₂ = 2 Ω seri R₃ = 10 Ω) dan cabang bawah (R₄ = 6 Ω). Rangkaian dihubungkan pada baterai 18 Volt dengan hambatan dalam r = 2 Ω. Gambarkan sketsa rangkaiannya, hitung hambatan pengganti total, serta hitung kuat arus yang melewati resistor R₂!" }
+      ]
+    };
 
-    // Tempel URL Web App Google Apps Script Anda di sini
-    const GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbypoXDJGYOHL4aRZa0ELyKQH79p-9xcAkVD78DPrOOZjKV3q3MVoANZyEKVF-VWOJqe/exec"; 
+    // Tempel URL Web App Google Apps Script di sini
+    const GOOGLE_SCRIPT_WEBAPP_URL = "URL_GOOGLE_APPS_SCRIPT_DISINI";
 
     let currentIdx = 0;
-    let studentData = { name: "", class: "XII-1" };
+    let selectedPacketName = "Paket A";
+    let questions = questionPackets["Paket A"];
+    let studentData = { name: "", class: "XII-1", nis: "", packet: "Paket A" };
     let canvasDataStore = {};
     let textDataStore = {};
     let timerSeconds = 60 * 60;
     let timerInterval = null;
+    let tabSwitchCount = 0;
 
     const canvas = document.getElementById('whiteboard');
     const ctx = canvas.getContext('2d');
@@ -226,20 +263,56 @@
     let currentColor = '#0f172a';
     let lineWidth = 2.5;
 
+    // DETEKSI KECURANGAN PINDAH TAB
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && !document.getElementById('step-exam').classList.contains('hidden')) {
+        tabSwitchCount++;
+        document.getElementById('cheat-badge').classList.remove('hidden');
+        document.getElementById('cheat-badge').classList.add('flex');
+        document.getElementById('cheat-count-display').textContent = tabSwitchCount;
+        
+        saveToLocalStorage();
+
+        if (tabSwitchCount >= 3) {
+          alert(`PERINGATAN DARI GURU (Fadhillah Umar, S.Pd.):\nAnda terdeteksi telah meninggalkan tab ujian sebanyak ${tabSwitchCount} kali! Catatan ini otomatis terkirim ke Google Sheets dan nilai Anda akan dikurangi.`);
+        } else {
+          alert(`Peringatan (${tabSwitchCount}/3): Dilarang membuka tab atau aplikasi lain selama ujian berlangsung!`);
+        }
+      }
+    });
+
+    // RESTORE STATE SESSION
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('cbt_physics_session');
+      const saved = localStorage.getItem('cbt_physics_uas_session');
       if (saved) {
         const parsed = JSON.parse(saved);
         studentData = parsed.studentData || {};
+        selectedPacketName = studentData.packet || "Paket A";
+        questions = questionPackets[selectedPacketName] || questionPackets["Paket A"];
         canvasDataStore = parsed.canvasDataStore || {};
         textDataStore = parsed.textDataStore || {};
         timerSeconds = parsed.timerSeconds || 60 * 60;
+        tabSwitchCount = parsed.tabSwitchCount || 0;
 
-        if (studentData.name && !parsed.isFinished) {
+        if (parsed.isFinished) {
+          showBlockedScreen(studentData);
+          return;
+        }
+
+        if (studentData.name) {
           launchExamUI();
         }
       }
     });
+
+    function showBlockedScreen(data) {
+      document.getElementById('step-identity').classList.add('hidden');
+      document.getElementById('step-exam').classList.add('hidden');
+      document.getElementById('step-result').classList.add('hidden');
+      document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('step-blocked').classList.remove('hidden');
+      document.getElementById('block-student-info').textContent = `${data.name} | ${data.class} (Absen: ${data.nis}) - [${data.packet}]`;
+    }
 
     function saveToLocalStorage() {
       const session = {
@@ -247,26 +320,44 @@
         canvasDataStore,
         textDataStore,
         timerSeconds,
+        tabSwitchCount,
         isFinished: false
       };
-      localStorage.setItem('cbt_physics_session', JSON.stringify(session));
+      localStorage.setItem('cbt_physics_uas_session', JSON.stringify(session));
+    }
+
+    function determinePacket(absenNum) {
+      const packets = ["Paket A", "Paket B", "Paket C", "Paket D", "Paket E"];
+      const num = parseInt(absenNum) || 1;
+      return packets[(num - 1) % 5];
     }
 
     function startExam() {
       const name = document.getElementById('student-name').value.trim();
       const studentClass = document.getElementById('student-class').value;
+      const nis = document.getElementById('student-nis').value.trim();
       const token = document.getElementById('exam-token').value.trim().toUpperCase();
 
-      if (!name) {
-        alert("Silakan masukkan Nama Lengkap terlebih dahulu!");
+      if (!name || !nis) {
+        alert("Silakan lengkapi Nama Siswa dan Nomor Absen!");
         return;
       }
       if (token !== VALID_TOKEN) {
-        alert("Token Ujian Salah! Masukkan token yang valid.");
+        alert("Token Ujian Salah! Masukkan token resmi dari guru.");
         return;
       }
 
-      studentData = { name, class: studentClass };
+      const completedList = JSON.parse(localStorage.getItem('cbt_completed_submissions') || '[]');
+      const isAlreadySubmitted = completedList.some(item => item.name.toLowerCase() === name.toLowerCase() && item.nis === nis);
+      if (isAlreadySubmitted) {
+        alert("Nama dan Nomor Absen ini telah tercatat mengirimkan ujian sebelumnya!");
+        showBlockedScreen({ name, class: studentClass, nis, packet: determinePacket(nis) });
+        return;
+      }
+
+      selectedPacketName = determinePacket(nis);
+      questions = questionPackets[selectedPacketName];
+      studentData = { name, class: studentClass, nis, packet: selectedPacketName };
       saveToLocalStorage();
       launchExamUI();
     }
@@ -277,6 +368,13 @@
       document.getElementById('step-exam').classList.add('flex');
       document.getElementById('timer-box').classList.remove('hidden');
       document.getElementById('timer-box').classList.add('flex');
+      document.getElementById('header-packet').textContent = `Kelas XII-1 (${selectedPacketName})`;
+
+      if (tabSwitchCount > 0) {
+        document.getElementById('cheat-badge').classList.remove('hidden');
+        document.getElementById('cheat-badge').classList.add('flex');
+        document.getElementById('cheat-count-display').textContent = tabSwitchCount;
+      }
 
       renderPills();
       loadQuestion(currentIdx);
@@ -298,17 +396,15 @@
 
         if (timerSeconds <= 0) {
           clearInterval(timerInterval);
-          alert("Waktu ujian telah habis!");
+          alert("Waktu pengerjaan 60 menit telah habis! Lembar pengerjaan Anda otomatis dikirim.");
           finishExam();
         }
       }, 1000);
     }
 
-    // CANVAS HANDLING (POLOS MURNI TANPA KOTAK)
     function handleCanvasResize() {
       const rect = canvas.getBoundingClientRect();
       const currentData = canvasDataStore[currentIdx];
-      
       canvas.width = rect.width * (window.devicePixelRatio || 1);
       canvas.height = rect.height * (window.devicePixelRatio || 1);
       ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
@@ -354,7 +450,7 @@
 
       if (currentTool === 'eraser') {
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 22;
+        ctx.lineWidth = 24;
       } else {
         ctx.strokeStyle = currentColor;
         ctx.lineWidth = lineWidth;
@@ -381,8 +477,8 @@
 
     function setTool(tool) {
       currentTool = tool;
-      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs';
-      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs';
+      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs';
+      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs';
     }
 
     function setColor(color) {
@@ -391,7 +487,7 @@
     }
 
     function clearCurrentCanvas() {
-      if (confirm(`Hapus seluruh coretan pada Nomor ${currentIdx + 1}?`)) {
+      if (confirm(`Hapus coretan langkah pengerjaan Nomor ${currentIdx + 1}?`)) {
         drawCanvasBackground();
         delete canvasDataStore[currentIdx];
         saveToLocalStorage();
@@ -413,7 +509,7 @@
         const btn = document.createElement('button');
         btn.id = `pill-${idx}`;
         btn.textContent = idx + 1;
-        btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${idx === currentIdx ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'}`;
+        btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${idx === currentIdx ? 'bg-indigo-600 text-white' : 'bg-slate-300 text-slate-700'}`;
         btn.onclick = () => {
           saveCurrentQuestionState();
           loadQuestion(idx);
@@ -428,11 +524,11 @@
         if (!pill) return;
         const hasWork = canvasDataStore[idx] || (textDataStore[idx] && textDataStore[idx].trim() !== "");
         if (idx === currentIdx) {
-          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-md";
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow";
         } else if (hasWork) {
           pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-emerald-600 text-white";
         } else {
-          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-slate-200 text-slate-600";
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-slate-300 text-slate-700";
         }
       });
     }
@@ -440,7 +536,7 @@
     function loadQuestion(idx) {
       currentIdx = idx;
       const q = questions[idx];
-      document.getElementById('soal-badge').textContent = `Soal ${idx + 1} dari ${questions.length}`;
+      document.getElementById('soal-badge').textContent = `Soal ${idx + 1} dari ${questions.length} (${selectedPacketName})`;
       document.getElementById('materi-badge').textContent = `Topik: ${q.topic}`;
       document.getElementById('question-text').textContent = q.text;
 
@@ -475,7 +571,7 @@
 
     function finishExamPrompt() {
       saveCurrentQuestionState();
-      if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim seluruh lembar jawaban ujian sekarang?")) {
+      if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim seluruh lembar ujian sekarang? Setelah dikirim, Anda tidak dapat mengakses ujian ini lagi.")) {
         finishExam();
       }
     }
@@ -487,17 +583,24 @@
       document.getElementById('step-exam').classList.add('hidden');
       document.getElementById('step-result').classList.remove('hidden');
       document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('cheat-badge').classList.add('hidden');
 
       document.getElementById('res-name').textContent = studentData.name;
-      document.getElementById('res-class').textContent = studentData.class;
+      document.getElementById('res-class').textContent = `${studentData.class} (Absen: ${studentData.nis})`;
+      document.getElementById('res-packet').textContent = selectedPacketName;
       
       const answeredCount = Object.keys(canvasDataStore).length;
-      document.getElementById('res-answered').textContent = `${answeredCount} dari ${questions.length} Soal Lengkap`;
+      document.getElementById('res-answered').textContent = `${answeredCount} dari ${questions.length} Soal Lengkap Terisi`;
+      document.getElementById('res-cheat').textContent = `${tabSwitchCount} Kali`;
       document.getElementById('res-time').textContent = new Date().toLocaleString('id-ID');
 
-      const session = JSON.parse(localStorage.getItem('cbt_physics_session') || '{}');
+      const session = JSON.parse(localStorage.getItem('cbt_physics_uas_session') || '{}');
       session.isFinished = true;
-      localStorage.setItem('cbt_physics_session', JSON.stringify(session));
+      localStorage.setItem('cbt_physics_uas_session', JSON.stringify(session));
+
+      const completedList = JSON.parse(localStorage.getItem('cbt_completed_submissions') || '[]');
+      completedList.push({ name: studentData.name, nis: studentData.nis });
+      localStorage.setItem('cbt_completed_submissions', JSON.stringify(completedList));
 
       sendDataToGoogleScript();
     }
@@ -508,6 +611,9 @@
       const payload = {
         nama: studentData.name,
         kelas: studentData.class,
+        absen: studentData.nis,
+        paket: selectedPacketName,
+        pelanggaranTab: tabSwitchCount,
         waktu: new Date().toISOString(),
         jawabanTeks: textDataStore,
         jawabanGambar: canvasDataStore
@@ -530,16 +636,17 @@
       const doc = new jsPDF();
       doc.setFontSize(13);
       doc.setFont("helvetica", "bold");
-      doc.text("LEMBAR JAWABAN ASESMEN FISIKA XII", 15, 15);
+      doc.text("LEMBAR JAWABAN ASESMEN FISIKA KELAS XII", 15, 15);
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.text(`Nama: ${studentData.name} | Kelas: ${studentData.class}`, 15, 22);
-      doc.text(`Waktu Pengiriman: ${new Date().toLocaleString('id-ID')}`, 15, 27);
-      doc.line(15, 30, 195, 30);
+      doc.text(`Guru Pengampu : Fadhillah Umar, S.Pd.`, 15, 21);
+      doc.text(`Nama Siswa    : ${studentData.name} | Kelas: ${studentData.class} | Absen: ${studentData.nis} | [${selectedPacketName}]`, 15, 26);
+      doc.text(`Waktu Kirim   : ${new Date().toLocaleString('id-ID')} | Status Tab: ${tabSwitchCount}x Pindah Tab`, 15, 31);
+      doc.line(15, 34, 195, 34);
 
-      let yPos = 36;
+      let yPos = 40;
       questions.forEach((q, idx) => {
-        if (yPos > 230) {
+        if (yPos > 225) {
           doc.addPage();
           yPos = 20;
         }
@@ -548,22 +655,24 @@
         doc.text(`Soal ${idx + 1} (${q.topic}):`, 15, yPos);
         doc.setFont("helvetica", "normal");
         doc.text(doc.splitTextToSize(q.text, 175), 15, yPos + 5);
-        yPos += 16;
+        yPos += 18;
 
+        doc.setFont("helvetica", "bold");
         doc.text(`Hasil Akhir: ${textDataStore[idx] || "-"}`, 15, yPos);
+        doc.setFont("helvetica", "normal");
         yPos += 6;
 
         if (canvasDataStore[idx]) {
           try {
             doc.addImage(canvasDataStore[idx], 'PNG', 15, yPos, 120, 50);
-            yPos += 55;
+            yPos += 56;
           } catch (e) {
             yPos += 5;
           }
         }
       });
 
-      doc.save(`Ujian_Fisika_${studentData.name}.pdf`);
+      doc.save(`Ujian_Fisika_${studentData.name}_Absen_${studentData.nis}_${selectedPacketName}.pdf`);
     }
   </script>
 </body>
