@@ -3,71 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ulangan Harian Fisika XII</title>
+  <title>Portal Ujian Fisika XII - Asesmen Harian</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- jsPDF untuk render PDF lokal sebagai cadangan -->
+  <!-- jsPDF untuk render PDF cadangan -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .canvas-container { touch-action: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between select-none">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between select-none">
 
   <!-- HEADER -->
-  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 shadow-lg">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 px-4 py-3 shadow-sm">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-indigo-500/20 shadow-lg">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
           ⚡
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight text-white">Ulangan Harian Fisika XII</h1>
-          <p class="text-xs text-slate-400">Listrik Statis & Dinamis</p>
+          <h1 class="text-base sm:text-lg font-bold leading-tight text-slate-900">Asesmen Harian Fisika XII</h1>
+          <p class="text-xs text-slate-500 font-medium">Listrik Statis & Dinamis • Kelas XII-1</p>
         </div>
       </div>
 
       <!-- TIMER -->
-      <div id="timer-box" class="hidden items-center space-x-2 bg-slate-800 px-3.5 py-1.5 rounded-xl border border-slate-700">
+      <div id="timer-box" class="hidden items-center space-x-2 bg-slate-900 text-white px-3.5 py-1.5 rounded-xl shadow">
         <span class="text-amber-400">⏱️</span>
         <span id="timer-display" class="font-mono text-sm sm:text-base font-bold text-amber-300">60:00</span>
       </div>
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTAINER -->
   <main class="max-w-6xl mx-auto w-full p-3 sm:p-4 flex-1 flex flex-col justify-center">
 
-    <!-- STEP 1: LOGIN IDENTITAS -->
-    <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl my-auto">
+    <!-- STEP 1: LOGIN IDENTITAS & TOKEN -->
+    <section id="step-identity" class="max-w-md mx-auto w-full bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl my-auto">
       <div class="text-center mb-6">
-        <span class="px-3 py-1 bg-indigo-500/10 text-indigo-400 text-xs font-semibold rounded-full border border-indigo-500/20">CBT Digital Essay</span>
-        <h2 class="text-2xl font-black mt-3 text-white">Identitas Siswa</h2>
-        <p class="text-slate-400 text-xs mt-1">Sesi ujian akan tersimpan otomatis jika browser tidak sengaja tertutup.</p>
+        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full border border-indigo-100">CBT Digital Essay</span>
+        <h2 class="text-2xl font-black mt-3 text-slate-900">Portal Masuk Ujian</h2>
+        <p class="text-slate-500 text-xs mt-1">Masukkan nama lengkap dan token yang dibagikan guru.</p>
       </div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Lengkap</label>
-          <input type="text" id="student-name" placeholder="Masukkan nama lengkap" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm focus:outline-none focus:border-indigo-500 text-white transition">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Lengkap Siswa</label>
+          <input type="text" id="student-name" placeholder="Contoh: Muhammad Raihan" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1.5">Kelas</label>
-          <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm focus:outline-none focus:border-indigo-500 text-slate-200 transition">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Kelas</label>
+          <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
             <option value="XII-1">XII-1</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1.5">Nomor Absen</label>
-          <input type="number" id="student-nis" placeholder="Contoh: 12" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm focus:outline-none focus:border-indigo-500 text-white transition">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Token Akses Ujian</label>
+          <input type="text" id="exam-token" placeholder="Masukkan TOKEN (cth: FISIKA12)" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm font-mono uppercase focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900 transition">
         </div>
 
         <div class="pt-3">
-          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition active:scale-95 text-white">
-            Mulai / Lanjutkan Ujian ➔
+          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 font-bold text-sm rounded-xl shadow-lg shadow-indigo-200 transition active:scale-95 text-white flex items-center justify-center space-x-2">
+            <span>Mulai Pengerjaan Ujian</span>
+            <span>➔</span>
           </button>
         </div>
       </div>
@@ -76,75 +77,75 @@
     <!-- STEP 2: HALAMAN UJIAN & WHITEBOARD -->
     <section id="step-exam" class="hidden flex-col lg:flex-row gap-5 my-auto">
       
-      <!-- SISI KIRI: SOAL & JAWABAN KETIK -->
-      <div class="lg:w-5/12 flex flex-col justify-between bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-xl space-y-4">
+      <!-- SISI KIRI: SOAL -->
+      <div class="lg:w-5/12 flex flex-col justify-between bg-white p-5 rounded-3xl border border-slate-200 shadow-md space-y-4">
         <div>
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
-            <span id="soal-badge" class="px-3 py-1 bg-indigo-500/10 text-indigo-300 text-xs font-bold rounded-lg border border-indigo-500/20">Soal 1 dari 5</span>
-            <span id="materi-badge" class="text-xs text-amber-400 font-semibold">Topik: Gaya Listrik</span>
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+            <span id="soal-badge" class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg">Soal 1 dari 5</span>
+            <span id="materi-badge" class="text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md font-bold border border-amber-200">Topik: Gaya Listrik</span>
           </div>
 
-          <div class="min-h-[140px] bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
-            <p id="question-text" class="text-sm sm:text-base font-normal leading-relaxed text-slate-200 leading-6"></p>
+          <div class="min-h-[140px] bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <p id="question-text" class="text-sm sm:text-base font-medium text-slate-800 leading-relaxed"></p>
           </div>
 
           <div class="mt-4">
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Kesimpulan / Jawaban Akhir (Opsional):</label>
-            <input type="text" id="final-answer-input" oninput="saveCurrentQuestionState()" placeholder="Contoh: F = 1.8 N (Tarik-menarik)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 text-white">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan / Hasil Akhir (Opsional):</label>
+            <input type="text" id="final-answer-input" oninput="saveCurrentQuestionState()" placeholder="Contoh: F = 1.2 N (Tarik-menarik)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs sm:text-sm focus:outline-none focus:border-indigo-600 focus:bg-white text-slate-900">
           </div>
         </div>
 
         <!-- NAVIGASI NOMOR -->
-        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-          <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed text-white">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed text-slate-700">
             ⬅ Sebelumnya
           </button>
           
           <div class="flex gap-1.5 overflow-x-auto" id="soal-pills"></div>
 
-          <button id="btn-next" onclick="nextQuestion()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold transition text-white">
+          <button id="btn-next" onclick="nextQuestion()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold transition text-white">
             Berikutnya ➡
           </button>
         </div>
       </div>
 
-      <!-- SISI KANAN: PAPAN CORET DIGITAL PER NOMOR -->
-      <div class="lg:w-7/12 bg-slate-900 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-xl flex flex-col">
-        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-800 text-xs">
+      <!-- SISI KANAN: PAPAN CORET DIGITAL TERANG -->
+      <div class="lg:w-7/12 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-md flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 text-xs">
           <div class="flex items-center space-x-2">
-            <span class="font-bold text-slate-200">✍️ Papan Coret Rumus</span>
-            <span class="text-[11px] text-slate-400 hidden sm:inline">(Tersimpan mandiri per soal)</span>
+            <span class="font-bold text-slate-800">✍️ Lembar Coretan Rumus</span>
+            <span class="text-[11px] text-slate-500 hidden sm:inline">(Tersimpan per nomor)</span>
           </div>
 
           <!-- TOOLBAR WHITEBOARD -->
           <div class="flex items-center space-x-1.5 sm:space-x-2">
-            <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-xs">Pena</button>
-            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs">Penghapus</button>
+            <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs">Pena</button>
+            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">Penghapus</button>
             
-            <div class="flex items-center space-x-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">
-              <button onclick="setColor('#ffffff')" class="w-4 h-4 rounded-full bg-white border border-slate-400"></button>
-              <button onclick="setColor('#38bdf8')" class="w-4 h-4 rounded-full bg-sky-400"></button>
-              <button onclick="setColor('#facc15')" class="w-4 h-4 rounded-full bg-amber-400"></button>
-              <button onclick="setColor('#f43f5e')" class="w-4 h-4 rounded-full bg-rose-500"></button>
+            <!-- COLOR PALETTE (TERANG & KONTRAS) -->
+            <div class="flex items-center space-x-1.5 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200">
+              <button onclick="setColor('#0f172a')" class="w-4 h-4 rounded-full bg-slate-900 border border-slate-400" title="Hitam"></button>
+              <button onclick="setColor('#2563eb')" class="w-4 h-4 rounded-full bg-blue-600" title="Biru"></button>
+              <button onclick="setColor('#dc2626')" class="w-4 h-4 rounded-full bg-red-600" title="Merah"></button>
             </div>
 
-            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-950/50 border border-rose-800/40 text-rose-300 hover:bg-rose-900/60 text-xs">Reset</button>
+            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 font-bold text-xs">Reset</button>
           </div>
         </div>
 
-        <!-- CANVAS WHITEBOARD AREA -->
-        <div class="relative w-full flex-1 bg-slate-950 rounded-2xl border-2 border-dashed border-slate-800 overflow-hidden canvas-container min-h-[380px] flex items-center justify-center">
+        <!-- CANVAS WHITEBOARD AREA BERLATAR TERANG -->
+        <div class="relative w-full flex-1 bg-white rounded-2xl border-2 border-slate-300 overflow-hidden canvas-container min-h-[380px] flex items-center justify-center shadow-inner">
           <canvas id="whiteboard" class="w-full h-full cursor-crosshair"></canvas>
-          <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-slate-500 bg-slate-900/90 px-2 py-1 rounded border border-slate-800">
-            Tulis langkah rumus & perhitungan di sini
+          <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-slate-400 bg-white/90 px-2 py-1 rounded border border-slate-200 shadow-sm">
+            Tulis langkah rumus & hitungan di sini
           </div>
         </div>
 
         <div class="mt-4 flex items-center justify-between">
-          <span class="text-[11px] text-emerald-400 flex items-center">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Auto-save aktif
+          <span class="text-[11px] text-emerald-600 font-semibold flex items-center">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> Auto-save aktif
           </span>
-          <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/20 transition text-white">
+          <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs sm:text-sm font-bold shadow-md transition text-white">
             Kirim Lembar Jawaban Ujian ➔
           </button>
         </div>
@@ -152,24 +153,24 @@
     </section>
 
     <!-- STEP 3: HASIL SELESAI -->
-    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-slate-900 p-7 sm:p-10 rounded-3xl border border-slate-800 shadow-2xl text-center my-auto">
-      <div class="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 mx-auto flex items-center justify-center text-3xl mb-4">
+    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-white p-7 sm:p-10 rounded-3xl border border-slate-200 shadow-xl text-center my-auto">
+      <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100 mx-auto flex items-center justify-center text-3xl mb-4">
         ✨
       </div>
-      <h2 class="text-xl sm:text-2xl font-black text-white">Selamat, Anda Telah Mengerjakan!</h2>
-      <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-        Seluruh lembar pengerjaan dan coretan rumus Anda telah berhasil dikirim ke sistem guru. Berdoalah supaya hasil nilainya maksimal!
+      <h2 class="text-xl sm:text-2xl font-black text-slate-900">Selamat, Anda Telah Mengerjakan!</h2>
+      <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+        Seluruh lembar pengerjaan dan coretan rumus Anda telah berhasil terekam ke sistem guru. Berdoalah supaya hasil nilainya maksimal!
       </p>
 
-      <div class="my-6 p-4 rounded-2xl bg-slate-950 border border-slate-800 text-left text-xs space-y-2 text-slate-300">
-        <div><strong class="text-slate-400">Nama Lengkap:</strong> <span id="res-name" class="font-semibold text-white"></span></div>
-        <div><strong class="text-slate-400">Kelas / Absen:</strong> <span id="res-class" class="font-semibold text-white"></span></div>
-        <div><strong class="text-slate-400">Status Soal Terisi:</strong> <span id="res-answered" class="font-semibold text-emerald-400"></span></div>
-        <div><strong class="text-slate-400">Waktu Pengiriman:</strong> <span id="res-time" class="font-semibold text-white"></span></div>
+      <div class="my-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2 text-slate-700">
+        <div><strong class="text-slate-500">Nama Lengkap:</strong> <span id="res-name" class="font-bold text-slate-900"></span></div>
+        <div><strong class="text-slate-500">Kelas:</strong> <span id="res-class" class="font-bold text-slate-900"></span></div>
+        <div><strong class="text-slate-500">Status Soal Terisi:</strong> <span id="res-answered" class="font-bold text-emerald-600"></span></div>
+        <div><strong class="text-slate-500">Waktu Pengiriman:</strong> <span id="res-time" class="font-bold text-slate-900"></span></div>
       </div>
 
       <div class="space-y-3">
-        <button onclick="downloadPDFBackup()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 font-bold text-xs rounded-xl text-slate-200 border border-slate-700 transition flex items-center justify-center space-x-2">
+        <button onclick="downloadPDFBackup()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-900 font-bold text-xs rounded-xl text-white shadow transition flex items-center justify-center space-x-2">
           <span>📄 Unduh Dokumen PDF Jawaban (Cadangan Siswa)</span>
         </button>
       </div>
@@ -179,9 +180,10 @@
 
   <!-- LOGIC SCRIPT -->
   <script>
-    // ==========================================
-    // 1. DATA SOAL FISIKA KELAS 12 (5 SOAL ESSAY)
-    // ==========================================
+    // TOKEN UJIAN (Bisa Anda ubah sesuai keinginan)
+    const VALID_TOKEN = "FISIKA12";
+
+    // 5 SOAL HITUNGAN LOGIS FISIKA KELAS 12
     const questions = [
       {
         id: 1,
@@ -191,58 +193,52 @@
       {
         id: 2,
         topic: "Medan Listrik",
-        text: "Sebuah titik P berjarak 30 cm dari sebuah muatan sumber Q = +9 μC. Hitunglah kuat medan listrik di titik P serta tentukan arah vektor medan listriknya (menjauhi atau menuju muatan sumber)!"
+        text: "Sebuah titik P berjarak 30 cm dari muatan sumber Q = +9 μC di udara. Hitunglah besar kuat medan listrik di titik P serta tentukan arah vektor medannya!"
       },
       {
         id: 3,
         topic: "Kapasitor (Rangkaian Seri)",
-        text: "Dua buah kapasitor masing-masing memiliki kapasitas C₁ = 6 μF dan C₂ = 3 μF dirangkai secara seri, lalu dihubungkan dengan sumber tegangan 18 Volt. Hitunglah kapasitas total rangkaian dan muatan total yang tersimpan pada rangkaian kapasitor tersebut!"
+        text: "Dua buah kapasitor C₁ = 6 μF dan C₂ = 3 μF dirangkai secara seri dan dihubungkan dengan sumber tegangan 18 Volt. Hitung kapasitas total rangkaian dan muatan total yang tersimpan!"
       },
       {
         id: 4,
         topic: "Kapasitor (Rangkaian Paralel & Energi)",
-        text: "Dua kapasitor C₁ = 4 μF dan C₂ = 6 μF dirangkai secara paralel dan dihubungkan pada tegangan sumber 10 Volt. Hitung kapasitas total pengganti rangkaian serta besar energi listrik total yang tersimpan dalam sistem tersebut!"
+        text: "Dua kapasitor C₁ = 4 μF dan C₂ = 6 μF dirangkai paralel lalu dihubungkan dengan tegangan sumber 10 Volt. Tentukan kapasitas pengganti total serta total energi listrik yang tersimpan!"
       },
       {
         id: 5,
         topic: "Hukum Ohm & Rangkaian Resistor",
-        text: "Tiga buah resistor dengan nilai R₁ = 6 Ω, R₂ = 12 Ω, dan R₃ = 4 Ω disusun secara paralel dan dihubungkan dengan sumber tegangan 12 Volt. Tentukan besar hambatan pengganti total (Rp) serta kuat arus listrik total yang keluar dari baterai!"
+        text: "Tiga resistor R₁ = 6 Ω, R₂ = 12 Ω, dan R₃ = 4 Ω disusun paralel dan dihubungkan pada tegangan 12 Volt. Tentukan hambatan total (Rp) serta arus listrik total yang keluar dari sumber tegangan!"
       }
     ];
 
-    // Ganti dengan URL Google Apps Script hasil deploy Web App Anda
-    const GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxQ_q_BsY5eNNBXpgNEn84b25FV_V6npofyVGOi-HfPGX11YBTLqCmjZZekkMyB_60/exec"; 
+    const GOOGLE_SCRIPT_WEBAPP_URL = ""; 
 
-    // State & Storage Variables
     let currentIdx = 0;
-    let studentData = { name: "", class: "XII-1", nis: "" };
-    let canvasDataStore = {}; // { 0: dataURL, 1: dataURL, ... }
-    let textDataStore = {};   // { 0: text, 1: text, ... }
-    let timerSeconds = 60 * 60; // 60 Menit
+    let studentData = { name: "", class: "XII-1" };
+    let canvasDataStore = {};
+    let textDataStore = {};
+    let timerSeconds = 60 * 60;
     let timerInterval = null;
 
-    // Canvas Engine
+    // Canvas Variables
     const canvas = document.getElementById('whiteboard');
     const ctx = canvas.getContext('2d');
     let isDrawing = false;
     let currentTool = 'pen';
-    let currentColor = '#ffffff';
+    let currentColor = '#0f172a'; // Default Tinta Hitam
     let lineWidth = 2.5;
 
-    // Cek Session Storage (Auto-restore jika reload / log out)
+    // Check Local Storage
     window.addEventListener('DOMContentLoaded', () => {
-      const savedSession = localStorage.getItem('cbt_physics_session');
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        studentData = parsed.studentData;
+      const saved = localStorage.getItem('cbt_physics_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        studentData = parsed.studentData || {};
         canvasDataStore = parsed.canvasDataStore || {};
         textDataStore = parsed.textDataStore || {};
         timerSeconds = parsed.timerSeconds || 60 * 60;
 
-        document.getElementById('student-name').value = studentData.name;
-        document.getElementById('student-nis').value = studentData.nis;
-        
-        // Auto masuk ke exam jika nama sudah ada
         if (studentData.name && !parsed.isFinished) {
           launchExamUI();
         }
@@ -263,14 +259,18 @@
     function startExam() {
       const name = document.getElementById('student-name').value.trim();
       const studentClass = document.getElementById('student-class').value;
-      const nis = document.getElementById('student-nis').value.trim();
+      const token = document.getElementById('exam-token').value.trim().toUpperCase();
 
-      if (!name || !nis) {
-        alert("Mohon isi Nama Lengkap dan Nomor Absen terlebih dahulu!");
+      if (!name) {
+        alert("Silakan masukkan Nama Lengkap terlebih dahulu!");
+        return;
+      }
+      if (token !== VALID_TOKEN) {
+        alert("Token Ujian Salah / Tidak Valid! Silakan minta token yang benar ke guru.");
         return;
       }
 
-      studentData = { name, class: studentClass, nis };
+      studentData = { name, class: studentClass };
       saveToLocalStorage();
       launchExamUI();
     }
@@ -298,20 +298,17 @@
         const s = timerSeconds % 60;
         display.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         
-        // Save state berkala
         if (timerSeconds % 10 === 0) saveToLocalStorage();
 
         if (timerSeconds <= 0) {
           clearInterval(timerInterval);
-          alert("Waktu 60 menit telah habis! Lembar jawaban Anda otomatis dikirim.");
+          alert("Waktu ujian telah habis!");
           finishExam();
         }
       }, 1000);
     }
 
-    // -------------------------------------------------------------
-    // WHITEBOARD CANVAS SYSTEM (INDEPENDEN TIAP NOMOR)
-    // -------------------------------------------------------------
+    // CANVAS HANDLING (TERANG & BERSIH)
     function handleCanvasResize() {
       const rect = canvas.getBoundingClientRect();
       const currentData = canvasDataStore[currentIdx];
@@ -332,15 +329,13 @@
     function drawCanvasBackground() {
       const rect = canvas.getBoundingClientRect();
       ctx.save();
-      ctx.strokeStyle = '#1e293b';
-      ctx.lineWidth = 0.5;
-      for (let x = 0; x < rect.width; x += 25) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, rect.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < rect.height; y += 25) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, rect.width, rect.height);
+      
+      // Grid Garis Halus Buku
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+      for (let y = 0; y < rect.height; y += 28) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(rect.width, y);
@@ -372,8 +367,8 @@
       ctx.lineJoin = 'round';
 
       if (currentTool === 'eraser') {
-        ctx.strokeStyle = '#020617';
-        ctx.lineWidth = 20;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 22;
       } else {
         ctx.strokeStyle = currentColor;
         ctx.lineWidth = lineWidth;
@@ -400,8 +395,8 @@
 
     function setTool(tool) {
       currentTool = tool;
-      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs';
-      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs';
+      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs';
+      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-200 text-slate-700 font-bold text-xs';
     }
 
     function setColor(color) {
@@ -410,9 +405,8 @@
     }
 
     function clearCurrentCanvas() {
-      if (confirm(`Hapus coretan pada Soal Nomor ${currentIdx + 1}?`)) {
+      if (confirm(`Hapus seluruh coretan pada Nomor ${currentIdx + 1}?`)) {
         const rect = canvas.getBoundingClientRect();
-        ctx.clearRect(0, 0, rect.width, rect.height);
         drawCanvasBackground();
         delete canvasDataStore[currentIdx];
         saveToLocalStorage();
@@ -420,9 +414,6 @@
       }
     }
 
-    // -------------------------------------------------------------
-    // NAVIGASI SOAL & STATE MANAGEMENT
-    // -------------------------------------------------------------
     function saveCurrentQuestionState() {
       canvasDataStore[currentIdx] = canvas.toDataURL("image/png");
       textDataStore[currentIdx] = document.getElementById('final-answer-input').value;
@@ -437,7 +428,7 @@
         const btn = document.createElement('button');
         btn.id = `pill-${idx}`;
         btn.textContent = idx + 1;
-        btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${idx === currentIdx ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`;
+        btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${idx === currentIdx ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'}`;
         btn.onclick = () => {
           saveCurrentQuestionState();
           loadQuestion(idx);
@@ -452,11 +443,11 @@
         if (!pill) return;
         const hasWork = canvasDataStore[idx] || (textDataStore[idx] && textDataStore[idx].trim() !== "");
         if (idx === currentIdx) {
-          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/30";
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-md";
         } else if (hasWork) {
           pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-emerald-600 text-white";
         } else {
-          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-slate-800 text-slate-400";
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-slate-200 text-slate-600";
         }
       });
     }
@@ -473,9 +464,7 @@
 
       document.getElementById('final-answer-input').value = textDataStore[idx] || "";
 
-      // Render Canvas nomor terkait
       const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
       drawCanvasBackground();
 
       if (canvasDataStore[idx]) {
@@ -500,9 +489,6 @@
       }
     }
 
-    // -------------------------------------------------------------
-    // SUBMISI JAWABAN KE GOOGLE DRIVE & SHEETS
-    // -------------------------------------------------------------
     function finishExamPrompt() {
       saveCurrentQuestionState();
       if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim seluruh lembar jawaban ujian sekarang?")) {
@@ -510,7 +496,7 @@
       }
     }
 
-    async function finishExam() {
+    function finishExam() {
       clearInterval(timerInterval);
       saveCurrentQuestionState();
 
@@ -519,28 +505,25 @@
       document.getElementById('timer-box').classList.add('hidden');
 
       document.getElementById('res-name').textContent = studentData.name;
-      document.getElementById('res-class').textContent = `${studentData.class} (Absen: ${studentData.nis})`;
+      document.getElementById('res-class').textContent = studentData.class;
       
       const answeredCount = Object.keys(canvasDataStore).length;
       document.getElementById('res-answered').textContent = `${answeredCount} dari ${questions.length} Soal Lengkap`;
       document.getElementById('res-time').textContent = new Date().toLocaleString('id-ID');
 
-      // Update state selesai di storage
       const session = JSON.parse(localStorage.getItem('cbt_physics_session') || '{}');
       session.isFinished = true;
       localStorage.setItem('cbt_physics_session', JSON.stringify(session));
 
-      // Kirim data ke Google Sheets & Drive secara asynchronous
       sendDataToGoogleScript();
     }
 
     async function sendDataToGoogleScript() {
-      if (!GOOGLE_SCRIPT_WEBAPP_URL || GOOGLE_SCRIPT_WEBAPP_URL.includes("ISI_DENGAN_URL")) return;
+      if (!GOOGLE_SCRIPT_WEBAPP_URL) return;
 
       const payload = {
         nama: studentData.name,
         kelas: studentData.class,
-        absen: studentData.nis,
         waktu: new Date().toISOString(),
         jawabanTeks: textDataStore,
         jawabanGambar: canvasDataStore
@@ -554,24 +537,25 @@
           body: JSON.stringify(payload)
         });
       } catch (e) {
-        console.error("Sinkronisasi latar belakang gagal:", e);
+        console.error(e);
       }
     }
 
-    // Generator PDF Lokal sebagai Cadangan Siswa
     function downloadPDFBackup() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      doc.setFontSize(14);
-      doc.text("LEMBAR JAWABAN ULANGAN FISIKA KELAS XII", 15, 15);
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.text("LEMBAR JAWABAN ASESMEN FISIKA XII", 15, 15);
       doc.setFontSize(10);
-      doc.text(`Nama: ${studentData.name} | Kelas: ${studentData.class} | Absen: ${studentData.nis}`, 15, 22);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Nama: ${studentData.name} | Kelas: ${studentData.class}`, 15, 22);
       doc.text(`Waktu Pengiriman: ${new Date().toLocaleString('id-ID')}`, 15, 27);
       doc.line(15, 30, 195, 30);
 
-      let yPos = 35;
+      let yPos = 36;
       questions.forEach((q, idx) => {
-        if (yPos > 240) {
+        if (yPos > 230) {
           doc.addPage();
           yPos = 20;
         }
@@ -580,10 +564,10 @@
         doc.text(`Soal ${idx + 1} (${q.topic}):`, 15, yPos);
         doc.setFont("helvetica", "normal");
         doc.text(doc.splitTextToSize(q.text, 175), 15, yPos + 5);
-        yPos += 18;
+        yPos += 16;
 
-        doc.text(`Jawaban Akhir: ${textDataStore[idx] || "-"}`, 15, yPos);
-        yPos += 7;
+        doc.text(`Hasil Akhir: ${textDataStore[idx] || "-"}`, 15, yPos);
+        yPos += 6;
 
         if (canvasDataStore[idx]) {
           try {
@@ -595,7 +579,7 @@
         }
       });
 
-      doc.save(`Ujian_Fisika_${studentData.name}_${studentData.class}.pdf`);
+      doc.save(`Ujian_Fisika_${studentData.name}.pdf`);
     }
   </script>
 </body>
