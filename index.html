@@ -9,20 +9,23 @@
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .canvas-container { touch-action: none; }
+    .calc-btn { @apply bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
+    .calc-fn { @apply bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
+    .calc-op { @apply bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
   </style>
 </head>
 <body class="bg-slate-200 text-slate-900 min-h-screen flex flex-col justify-between select-none">
 
   <!-- HEADER -->
-  <header class="bg-slate-800 text-white border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-md">
+  <header class="bg-slate-800 text-white border-b border-slate-700 sticky top-0 z-40 px-4 py-3 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow">
           ⚡
         </div>
         <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight">Evaluasi Akhir Bab Fisika XII</h1>
-          <p class="text-xs text-slate-300">Guru Pengampu: Fadhillah Umar, S.Pd. • <span id="header-packet" class="font-bold text-amber-300">Kelas XII-1</span></p>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">Asesmen Akhir Fisika XII</h1>
+          <p class="text-xs text-slate-300">Pengampu: Fadhillah Umar, S.Pd. • <span id="header-packet" class="font-bold text-amber-300">Kelas XII-1</span></p>
         </div>
       </div>
 
@@ -45,9 +48,9 @@
     <!-- STEP 1: LOGIN IDENTITAS & TOKEN -->
     <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-100 p-6 sm:p-8 rounded-3xl border-2 border-slate-300 shadow-xl my-auto">
       <div class="text-center mb-6">
-        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full border border-indigo-200">Evaluasi Akhir Bab (5 Paket Setara)</span>
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full border border-indigo-200">Asesmen Standar UAS (5 Paket Setara)</span>
         <h2 class="text-2xl font-black mt-3 text-slate-900">Identitas Siswa</h2>
-        <p class="text-slate-600 text-xs mt-1">Paket soal ditentukan otomatis secara adil</p>
+        <p class="text-slate-600 text-xs mt-1">Paket soal ditentukan otomatis secara adil berdasarkan nomor absen.</p>
       </div>
 
       <div class="space-y-4">
@@ -71,7 +74,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-800 mb-1.5">Token Ujian</label>
-          <input type="text" id="exam-token" placeholder="Masukkan TOKEN: FISIKA12" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-mono uppercase font-bold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+          <input type="text" id="exam-token" placeholder="Masukkan TOKEN (cth: FISIKA12)" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-mono uppercase font-bold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
         </div>
 
         <div class="pt-2">
@@ -128,6 +131,10 @@
 
           <!-- TOOLBAR WHITEBOARD -->
           <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <button onclick="toggleCalculator()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs shadow-sm flex items-center space-x-1">
+              <span>🧮</span>
+              <span>Kalkulator</span>
+            </button>
             <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs">Pena</button>
             <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs">Penghapus</button>
             
@@ -199,6 +206,75 @@
     </section>
 
   </main>
+
+  <!-- MODAL / POPUP KALKULATOR SAINS -->
+  <div id="calc-modal" class="hidden fixed bottom-6 right-6 z-50 w-80 sm:w-96 bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between border-b border-slate-700">
+      <div class="flex items-center space-x-2">
+        <span class="text-amber-400">🧮</span>
+        <span class="text-xs font-bold text-white tracking-wide">Kalkulator Sains Fisika</span>
+      </div>
+      <button onclick="toggleCalculator()" class="text-slate-400 hover:text-white font-black text-sm px-2">✕</button>
+    </div>
+    
+    <!-- Screen Display -->
+    <div class="p-3 bg-slate-950">
+      <div id="calc-history" class="text-right text-[11px] text-slate-400 min-h-[16px] overflow-x-auto font-mono"></div>
+      <input type="text" id="calc-display" readonly value="0" class="w-full bg-transparent text-right text-xl font-bold font-mono text-cyan-300 focus:outline-none select-all">
+    </div>
+
+    <!-- Keypad Grid -->
+    <div class="p-3 grid grid-cols-5 gap-1.5 bg-slate-900 text-[11px]">
+      <!-- Row 1 -->
+      <button onclick="calcInput('rad/deg')" id="calc-angle-btn" class="bg-slate-700 text-amber-300 font-bold py-2 rounded-lg text-xs">DEG</button>
+      <button onclick="calcFunc('sin')" class="calc-fn">sin</button>
+      <button onclick="calcFunc('cos')" class="calc-fn">cos</button>
+      <button onclick="calcFunc('tan')" class="calc-fn">tan</button>
+      <button onclick="calcClear()" class="bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-lg text-xs">AC</button>
+
+      <!-- Row 2 -->
+      <button onclick="calcFunc('ln')" class="calc-fn">ln</button>
+      <button onclick="calcFunc('log')" class="calc-fn">log</button>
+      <button onclick="calcFunc('sqrt')" class="calc-fn">√</button>
+      <button onclick="calcOp('^')" class="calc-fn">xʸ</button>
+      <button onclick="calcBackspace()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-lg text-xs">DEL</button>
+
+      <!-- Row 3 -->
+      <button onclick="calcInput('(')" class="calc-btn">(</button>
+      <button onclick="calcInput(')')" class="calc-btn">)</button>
+      <button onclick="calcFunc('inv')" class="calc-fn">1/x</button>
+      <button onclick="calcFunc('sqr')" class="calc-fn">x²</button>
+      <button onclick="calcOp('/')" class="calc-op">÷</button>
+
+      <!-- Row 4 -->
+      <button onclick="calcConst('pi')" class="calc-fn">π</button>
+      <button onclick="calcInput('7')" class="calc-btn">7</button>
+      <button onclick="calcInput('8')" class="calc-btn">8</button>
+      <button onclick="calcInput('9')" class="calc-btn">9</button>
+      <button onclick="calcOp('*')" class="calc-op">×</button>
+
+      <!-- Row 5 -->
+      <button onclick="calcConst('e')" class="calc-fn">e</button>
+      <button onclick="calcInput('4')" class="calc-btn">4</button>
+      <button onclick="calcInput('5')" class="calc-btn">5</button>
+      <button onclick="calcInput('6')" class="calc-btn">6</button>
+      <button onclick="calcOp('-')" class="calc-op">−</button>
+
+      <!-- Row 6 -->
+      <button onclick="calcFunc('10pow')" class="calc-fn">10ˣ</button>
+      <button onclick="calcInput('1')" class="calc-btn">1</button>
+      <button onclick="calcInput('2')" class="calc-btn">2</button>
+      <button onclick="calcInput('3')" class="calc-btn">3</button>
+      <button onclick="calcOp('+')" class="calc-op">+</button>
+
+      <!-- Row 7 -->
+      <button onclick="calcFunc('exp')" class="calc-fn">EXP</button>
+      <button onclick="calcInput('0')" class="calc-btn">0</button>
+      <button onclick="calcInput('.')" class="calc-btn">.</button>
+      <button onclick="calcFunc('pm')" class="calc-btn">±</button>
+      <button onclick="calcEquals()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs shadow">=</button>
+    </div>
+  </div>
 
   <!-- SCRIPT ENGINE -->
   <script>
@@ -584,6 +660,7 @@
       document.getElementById('step-result').classList.remove('hidden');
       document.getElementById('timer-box').classList.add('hidden');
       document.getElementById('cheat-badge').classList.add('hidden');
+      document.getElementById('calc-modal').classList.add('hidden');
 
       document.getElementById('res-name').textContent = studentData.name;
       document.getElementById('res-class').textContent = `${studentData.class} (Absen: ${studentData.nis})`;
@@ -673,6 +750,104 @@
       });
 
       doc.save(`Ujian_Fisika_${studentData.name}_Absen_${studentData.nis}_${selectedPacketName}.pdf`);
+    }
+
+    // -------------------------------------------------------------
+    // LOGIKA KALKULATOR SAINS TERINTEGRASI
+    // -------------------------------------------------------------
+    let calcExpr = "";
+    let isDeg = true;
+
+    function toggleCalculator() {
+      const modal = document.getElementById('calc-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function updateCalcDisplay(val) {
+      document.getElementById('calc-display').value = val || "0";
+      document.getElementById('calc-history').textContent = calcExpr;
+    }
+
+    function calcInput(ch) {
+      if (ch === 'rad/deg') {
+        isDeg = !isDeg;
+        document.getElementById('calc-angle-btn').textContent = isDeg ? "DEG" : "RAD";
+        return;
+      }
+      if (document.getElementById('calc-display').value === "0" && ch !== ".") {
+        calcExpr = ch;
+      } else {
+        calcExpr += ch;
+      }
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcOp(op) {
+      if (calcExpr === "" && op === '-') {
+        calcExpr = "-";
+      } else {
+        calcExpr += ` ${op} `;
+      }
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcClear() {
+      calcExpr = "";
+      updateCalcDisplay("0");
+    }
+
+    function calcBackspace() {
+      calcExpr = calcExpr.trimEnd();
+      calcExpr = calcExpr.slice(0, -1).trimEnd();
+      updateCalcDisplay(calcExpr || "0");
+    }
+
+    function calcConst(c) {
+      if (c === 'pi') calcExpr += Math.PI.toFixed(6);
+      if (c === 'e') calcExpr += Math.E.toFixed(6);
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcFunc(fn) {
+      try {
+        let current = evalSafe(calcExpr || document.getElementById('calc-display').value);
+        let res = 0;
+        if (fn === 'sin') res = isDeg ? Math.sin(current * Math.PI / 180) : Math.sin(current);
+        if (fn === 'cos') res = isDeg ? Math.cos(current * Math.PI / 180) : Math.cos(current);
+        if (fn === 'tan') res = isDeg ? Math.tan(current * Math.PI / 180) : Math.tan(current);
+        if (fn === 'ln') res = Math.log(current);
+        if (fn === 'log') res = Math.log10(current);
+        if (fn === 'sqrt') res = Math.sqrt(current);
+        if (fn === 'sqr') res = Math.pow(current, 2);
+        if (fn === 'inv') res = 1 / current;
+        if (fn === '10pow') res = Math.pow(10, current);
+        if (fn === 'pm') res = -current;
+        if (fn === 'exp') { calcExpr += "*10^"; updateCalcDisplay(calcExpr); return; }
+
+        calcExpr = String(Number(res.toFixed(8)));
+        updateCalcDisplay(calcExpr);
+      } catch (e) {
+        updateCalcDisplay("Error");
+        calcExpr = "";
+      }
+    }
+
+    function evalSafe(expr) {
+      if (!expr) return 0;
+      let sanitized = expr.replace(/\^/g, '**').replace(/×/g, '*').replace(/÷/g, '/');
+      return Function(`'use strict'; return (${sanitized})`)();
+    }
+
+    function calcEquals() {
+      try {
+        let result = evalSafe(calcExpr);
+        if (isNaN(result) || !isFinite(result)) throw new Error();
+        calcExpr = String(Number(result.toFixed(8)));
+        updateCalcDisplay(calcExpr);
+      } catch (e) {
+        updateCalcDisplay("Error");
+        calcExpr = "";
+      }
     }
   </script>
 </body>
