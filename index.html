@@ -4,34 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Ulangan Harian Fisika XII - Ujian Digital Interaktif</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- MathJax Official CDN (Tanpa polyfill.io) -->
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; touch-action: manipulation; }
+    body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .canvas-container { touch-action: none; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
 
   <!-- HEADER -->
-  <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-md">
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 px-4 py-3 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg">
-          <i class="fa-solid fa-atom"></i>
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xl shadow-lg">
+          ⚡
         </div>
         <div>
           <h1 class="text-base sm:text-lg font-bold leading-tight">CBT Fisika XII - Essay Digital</h1>
           <p class="text-xs text-slate-400 hidden sm:block">Gaya & Medan Listrik, Kapasitor, Hukum Ohm</p>
         </div>
       </div>
-      <div id="timer-box" class="hidden items-center space-x-3 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700">
-        <i class="fa-regular fa-clock text-cyan-400 animate-pulse"></i>
+      <div id="timer-box" class="hidden items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
+        <span class="text-cyan-400">⏱</span>
         <span id="timer-display" class="font-mono text-sm sm:text-base font-bold text-cyan-300">45:00</span>
       </div>
     </div>
@@ -41,7 +35,7 @@
   <main class="max-w-6xl mx-auto w-full p-4 flex-1 flex flex-col justify-center">
 
     <!-- STEP 1: FORM IDENTITAS -->
-    <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-800/60 backdrop-blur p-6 sm:p-8 rounded-3xl border border-slate-700/60 shadow-2xl my-auto">
+    <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-800 p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl my-auto">
       <div class="text-center mb-6">
         <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-semibold rounded-full border border-indigo-500/30">Ulangan Harian Digital</span>
         <h2 class="text-2xl font-black mt-3">Identitas Siswa</h2>
@@ -51,12 +45,12 @@
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Nama Lengkap Siswa</label>
-          <input type="text" id="student-name" placeholder="Contoh: Muhammad Raihan" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-white">
+          <input type="text" id="student-name" placeholder="Contoh: Muhammad Raihan" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-white">
         </div>
 
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Kelas / Jurusan</label>
-          <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-slate-200">
+          <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-slate-200">
             <option value="">-- Pilih Kelas --</option>
             <option value="XII MIPA 1">XII MIPA 1</option>
             <option value="XII MIPA 2">XII MIPA 2</option>
@@ -66,13 +60,13 @@
 
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1.5">Nomor Absen</label>
-          <input type="number" id="student-nis" placeholder="Contoh: 18" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-white">
+          <input type="number" id="student-nis" placeholder="Contoh: 18" class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition text-white">
         </div>
 
         <div class="pt-3">
-          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 hover:opacity-90 font-bold text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center space-x-2 text-white">
+          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 font-bold text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center space-x-2 text-white">
             <span>Mulai Pengerjaan Ujian</span>
-            <i class="fa-solid fa-arrow-right"></i>
+            <span>➔</span>
           </button>
         </div>
       </div>
@@ -82,9 +76,9 @@
     <section id="step-exam" class="hidden flex-col lg:flex-row gap-6 my-auto">
       
       <!-- KIRI: SOAL -->
-      <div class="lg:w-5/12 flex flex-col justify-between bg-slate-800/60 backdrop-blur p-5 sm:p-6 rounded-3xl border border-slate-700/60 shadow-xl space-y-4">
+      <div class="lg:w-5/12 flex flex-col justify-between bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-700 shadow-xl space-y-4">
         <div>
-          <div class="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-4">
+          <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
             <span id="soal-badge" class="px-3 py-1 bg-cyan-500/20 text-cyan-300 text-xs font-bold rounded-lg border border-cyan-500/30">Soal 1 dari 4</span>
             <span id="materi-badge" class="text-xs text-slate-400 font-medium">Topik: Gaya Listrik</span>
           </div>
@@ -95,31 +89,31 @@
 
           <div class="mt-4">
             <label class="block text-xs font-medium text-slate-300 mb-1.5">Keterangan / Jawaban Akhir (Opsional):</label>
-            <input type="text" id="final-answer-input" placeholder="Tulis jawaban akhir (misal: F = 1.8 x 10^-2 N)" class="w-full px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-700 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 text-white">
+            <input type="text" id="final-answer-input" placeholder="Tulis jawaban akhir (misal: F = 1.8 x 10^-2 N)" class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs sm:text-sm focus:outline-none focus:border-cyan-400 text-white">
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-700/80 flex items-center justify-between gap-2">
+        <div class="pt-4 border-t border-slate-700 flex items-center justify-between gap-2">
           <button id="btn-prev" onclick="prevQuestion()" class="px-4 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs font-bold transition disabled:opacity-30 disabled:cursor-not-allowed text-white">
-            <i class="fa-solid fa-chevron-left mr-1"></i> Sebelumnya
+            ⬅ Sebelumnya
           </button>
           
           <div class="flex gap-1 overflow-x-auto" id="soal-pills"></div>
 
           <button id="btn-next" onclick="nextQuestion()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold transition text-white">
-            Berikutnya <i class="fa-solid fa-chevron-right ml-1"></i>
+            Berikutnya ➡
           </button>
         </div>
       </div>
 
       <!-- KANAN: PAPAN CORET DIGITAL -->
-      <div class="lg:w-7/12 bg-slate-800/80 backdrop-blur p-4 sm:p-5 rounded-3xl border border-slate-700/60 shadow-xl flex flex-col">
+      <div class="lg:w-7/12 bg-slate-800 p-4 sm:p-5 rounded-3xl border border-slate-700 shadow-xl flex flex-col">
         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-700 text-xs">
-          <span class="font-bold text-slate-300 flex items-center"><i class="fa-solid fa-pen-fancy mr-1 text-cyan-400"></i> Papan Coret Rumus</span>
+          <span class="font-bold text-slate-300 flex items-center">✏️ Papan Coret Rumus</span>
 
           <div class="flex items-center space-x-1.5 sm:space-x-2">
-            <button onclick="setTool('pen')" id="tool-pen" class="p-2 rounded-lg bg-indigo-600 text-white font-semibold transition" title="Pena"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="setTool('eraser')" id="tool-eraser" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition" title="Penghapus"><i class="fa-solid fa-eraser"></i></button>
+            <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition">Pena</button>
+            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 transition">Penghapus</button>
             
             <div class="flex items-center space-x-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-700">
               <button onclick="setColor('#ffffff')" class="w-4 h-4 rounded-full bg-white border border-slate-500"></button>
@@ -128,7 +122,7 @@
               <button onclick="setColor('#f43f5e')" class="w-4 h-4 rounded-full bg-rose-500"></button>
             </div>
 
-            <button onclick="clearCanvas()" class="p-2 rounded-lg bg-rose-900/40 border border-rose-600/40 text-rose-300 hover:bg-rose-900/70 transition" title="Hapus Bersih"><i class="fa-solid fa-trash-can"></i></button>
+            <button onclick="clearCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-900/40 border border-rose-600/40 text-rose-300 hover:bg-rose-900/70 transition">Hapus</button>
           </div>
         </div>
 
@@ -140,23 +134,23 @@
         </div>
 
         <div class="mt-4 flex items-center justify-between">
-          <p class="text-[11px] text-slate-400"><i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Tersimpan otomatis saat ganti nomor.</p>
-          <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 text-xs sm:text-sm font-bold shadow-lg transition text-white">
-            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Selesai & Kirim Ujian
+          <p class="text-[11px] text-slate-400">ℹ️ Tersimpan otomatis saat ganti nomor.</p>
+          <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs sm:text-sm font-bold shadow-lg transition text-white">
+            Selesai & Kirim Ujian
           </button>
         </div>
       </div>
     </section>
 
     <!-- STEP 3: HASIL SELESAI -->
-    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-slate-800/70 backdrop-blur p-6 sm:p-8 rounded-3xl border border-slate-700/60 shadow-2xl text-center my-auto">
+    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-slate-800 p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl text-center my-auto">
       <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl border border-emerald-500/30 mx-auto flex items-center justify-center text-3xl mb-4">
-        <i class="fa-solid fa-circle-check animate-bounce"></i>
+        ✓
       </div>
       <h2 class="text-xl sm:text-2xl font-black">Ulangan Berhasil Diselesaikan!</h2>
       <p class="text-xs sm:text-sm text-slate-300 mt-2">Semua coretan rumus dan lembar jawaban essay Anda telah direkam ke sistem.</p>
 
-      <div class="my-6 p-4 rounded-2xl bg-slate-900/80 border border-slate-700 text-left text-xs space-y-2 text-slate-300">
+      <div class="my-6 p-4 rounded-2xl bg-slate-900 border border-slate-700 text-left text-xs space-y-2 text-slate-300">
         <div><strong class="text-slate-400">Nama:</strong> <span id="res-name" class="font-semibold text-white"></span></div>
         <div><strong class="text-slate-400">Kelas / Absen:</strong> <span id="res-class" class="font-semibold text-white"></span></div>
         <div><strong class="text-slate-400">Total Soal Dijawab:</strong> <span id="res-answered" class="font-semibold text-cyan-400"></span></div>
@@ -165,12 +159,11 @@
 
       <div class="space-y-3">
         <button id="btn-send-wa" onclick="sendToWhatsApp()" class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 font-bold text-xs sm:text-sm rounded-xl shadow-lg transition flex items-center justify-center space-x-2 text-white">
-          <i class="fa-brands fa-whatsapp text-lg"></i>
           <span>Kirim Notifikasi Rekap ke Guru (WhatsApp)</span>
         </button>
 
         <button onclick="downloadAllCanvases()" class="w-full py-2.5 px-4 bg-slate-700 hover:bg-slate-600 font-medium text-xs rounded-xl text-slate-200 transition">
-          <i class="fa-solid fa-download mr-1"></i> Unduh Lembar Coretan Essay (PNG)
+          Unduh Lembar Coretan Essay (PNG)
         </button>
       </div>
     </section>
@@ -183,27 +176,26 @@
       {
         id: 1,
         topic: "Gaya Listrik (Hukum Coulomb)",
-        text: "Dua buah muatan titik \\(q_1 = +4\\ \\mu\\text{C}\\) dan \\(q_2 = -9\\ \\mu\\text{C}\\) terpisah pada jarak \\(30\\ \\text{cm}\\) di udara (\\(k = 9 \\times 10^9\\ \\text{N}\\cdot\\text{m}^2/\\text{C}^2\\)). Hitunglah besar gaya Coulomb yang terjadi dan tentukan apakah gaya tersebut tarik-menarik atau tolak-menolak!"
+        text: "Dua buah muatan titik q₁ = +4 μC dan q₂ = -9 μC terpisah pada jarak 30 cm di udara (k = 9 × 10⁹ N·m²/C²). Hitunglah besar gaya Coulomb yang terjadi dan tentukan apakah gaya tersebut tarik-menarik atau tolak-menolak!"
       },
       {
         id: 2,
         topic: "Medan Listrik",
-        text: "Sebuah muatan uji \\(q_0 = +2\\ \\mu\\text{C}\\) diletakkan pada suatu titik dalam medan listrik yang dihasilkan oleh muatan sumber \\(Q = +8\\ \\mu\\text{C}\\) dengan jarak \\(20\\ \\text{cm}\\). Hitung besar kuat medan listrik (\\(E\\)) pada titik tersebut dan tentukan arah vektor medannya!"
+        text: "Sebuah muatan uji q₀ = +2 μC diletakkan pada suatu titik dalam medan listrik yang dihasilkan oleh muatan sumber Q = +8 μC dengan jarak 20 cm. Hitung besar kuat medan listrik (E) pada titik tersebut dan tentukan arah vektor medannya!"
       },
       {
         id: 3,
         topic: "Kapasitor Keping Sejajar",
-        text: "Dua buah kapasitor masing-masing berkapasitas \\(C_1 = 6\\ \\mu\\text{F}\\) dan \\(C_2 = 3\\ \\mu\\text{F}\\) dirangkai secara seri, lalu dihubungkan dengan sumber tegangan \\(V = 18\\ \\text{Volt}\\). Hitung kapasitas pengganti total (\\(C_{\\text{total}}\\)) dan muatan total (\\(Q\\)) yang tersimpan dalam rangkaian tersebut!"
+        text: "Dua buah kapasitor masing-masing berkapasitas C₁ = 6 μF dan C₂ = 3 μF dirangkai secara seri, lalu dihubungkan dengan sumber tegangan V = 18 Volt. Hitung kapasitas pengganti total (C_total) dan muatan total (Q) yang tersimpan dalam rangkaian tersebut!"
       },
       {
         id: 4,
         topic: "Hukum Ohm & Rangkaian Listrik",
-        text: "Tiga buah resistor \\(R_1 = 4\\ \\Omega\\), \\(R_2 = 6\\ \\Omega\\), dan \\(R_3 = 12\\ \\Omega\\) dirangkai paralel dan dihubungkan dengan sumber tegangan \\(V = 12\\ \\text{Volt}\\). Tentukan hambatan pengganti total (\\(R_p\\)) dan kuat arus listrik total (\\(I\\)) yang mengalir dari sumber tegangan!"
+        text: "Tiga buah resistor R₁ = 4 Ω, R₂ = 6 Ω, dan R₃ = 12 Ω dirangkai paralel dan dihubungkan dengan sumber tegangan V = 12 Volt. Tentukan hambatan pengganti total (R_p) dan kuat arus listrik total (I) yang mengalir dari sumber tegangan!"
       }
     ];
 
-    const GOOGLE_SCRIPT_WEBAPP_URL = ""; 
-    const GURU_WHATSAPP_NUMBER = "6281234567890"; // Ganti nomor WA di sini
+    const GURU_WHATSAPP_NUMBER = "6281234567890"; // Ganti no WA guru disini
 
     let currentIdx = 0;
     let studentData = { name: "", class: "", nis: "" };
@@ -303,8 +295,8 @@
 
     function setTool(tool) {
       currentTool = tool;
-      document.getElementById('tool-pen').className = tool === 'pen' ? 'p-2 rounded-lg bg-indigo-600 text-white font-semibold transition' : 'p-2 rounded-lg bg-slate-700 text-slate-300 transition';
-      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'p-2 rounded-lg bg-indigo-600 text-white font-semibold transition' : 'p-2 rounded-lg bg-slate-700 text-slate-300 transition';
+      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition' : 'px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 transition';
+      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold transition' : 'px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 transition';
     }
 
     function setColor(color) {
@@ -404,17 +396,10 @@
       const q = questions[idx];
       document.getElementById('soal-badge').textContent = `Soal ${idx + 1} dari ${questions.length}`;
       document.getElementById('materi-badge').textContent = `Topik: ${q.topic}`;
-      document.getElementById('question-text').innerHTML = q.text;
-
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        MathJax.typesetPromise();
-      }
+      document.getElementById('question-text').textContent = q.text;
 
       document.getElementById('btn-prev').disabled = (idx === 0);
-      document.getElementById('btn-next').textContent = (idx === questions.length - 1) ? 'Papan Terakhir' : 'Berikutnya ';
-      if (idx !== questions.length - 1) {
-        document.getElementById('btn-next').innerHTML = 'Berikutnya <i class="fa-solid fa-chevron-right ml-1"></i>';
-      }
+      document.getElementById('btn-next').textContent = (idx === questions.length - 1) ? 'Papan Terakhir' : 'Berikutnya ➡';
 
       document.getElementById('final-answer-input').value = (answers[idx] && answers[idx].text) ? answers[idx].text : "";
 
@@ -465,29 +450,6 @@
       const answeredCount = Object.keys(answers).length;
       document.getElementById('res-answered').textContent = `${answeredCount} dari ${questions.length} Soal`;
       document.getElementById('res-time').textContent = new Date().toLocaleString('id-ID');
-
-      sendToGoogleSheets();
-    }
-
-    async function sendToGoogleSheets() {
-      if (!GOOGLE_SCRIPT_WEBAPP_URL) return;
-      const payload = {
-        nama: studentData.name,
-        kelas: studentData.class,
-        absen: studentData.nis,
-        waktu: new Date().toISOString(),
-        jawaban: answers
-      };
-      try {
-        await fetch(GOOGLE_SCRIPT_WEBAPP_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.error(err);
-      }
     }
 
     function sendToWhatsApp() {
