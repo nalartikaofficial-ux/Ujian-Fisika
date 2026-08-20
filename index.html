@@ -9,9 +9,6 @@
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .canvas-container { touch-action: none; }
-    .calc-btn { @apply bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
-    .calc-fn { @apply bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
-    .calc-op { @apply bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold py-2 rounded-lg text-xs transition active:scale-95; }
   </style>
 </head>
 <body class="bg-slate-200 text-slate-900 min-h-screen flex flex-col justify-between select-none">
@@ -193,23 +190,32 @@
       </div>
     </section>
 
-    <!-- STEP 4: BLOKIR AKSES JIKA SUDAH PERNAH SUBMIT -->
+    <!-- STEP 4: BLOKIR AKSES & MENU BUKA KUNCI GURU -->
     <section id="step-blocked" class="hidden max-w-md mx-auto w-full bg-slate-100 p-8 rounded-3xl border-2 border-rose-300 shadow-xl text-center my-auto">
       <div class="w-16 h-16 bg-rose-100 text-rose-700 rounded-2xl border border-rose-300 mx-auto flex items-center justify-center text-3xl mb-4">
         🔒
       </div>
       <h2 class="text-xl font-black text-slate-900">Akses Ujian Ditutup</h2>
       <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-        Siswa dengan identitas ini tercatat telah menyelesaikan dan mengirimkan ujian ke sistem. Pengulangan ujian tidak diizinkan.
+        Siswa dengan identitas ini tercatat telah menyelesaikan dan mengirimkan ujian ke sistem.
       </p>
-      <div class="mt-5 p-3 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700" id="block-student-info"></div>
+      <div class="my-4 p-3 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700" id="block-student-info"></div>
+
+      <!-- OPSI BUKA KUNCI GURU -->
+      <div class="mt-4 pt-4 border-t border-slate-300">
+        <p class="text-[11px] text-slate-500 mb-2">Ingin membuka sesi ujian baru? Masukkan PIN Guru Pengampu:</p>
+        <div class="flex gap-2">
+          <input type="password" id="teacher-pin-input" placeholder="PIN Guru" class="w-2/3 px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 text-center">
+          <button onclick="unlockStudentSession()" class="w-1/3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">Buka Kunci</button>
+        </div>
+      </div>
     </section>
 
   </main>
 
-  <!-- MODAL / POPUP KALKULATOR SAINS -->
-  <div id="calc-modal" class="hidden fixed bottom-6 right-6 z-50 w-80 sm:w-96 bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
-    <div class="bg-slate-800 px-4 py-2.5 flex items-center justify-between border-b border-slate-700">
+  <!-- MODAL KALKULATOR SAINS TERINTEGRASI LENGKAP -->
+  <div id="calc-modal" class="hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[340px] sm:w-[380px] bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="bg-slate-800 px-4 py-2 flex items-center justify-between border-b border-slate-700">
       <div class="flex items-center space-x-2">
         <span class="text-amber-400">🧮</span>
         <span class="text-xs font-bold text-white tracking-wide">Kalkulator Sains Fisika</span>
@@ -217,70 +223,70 @@
       <button onclick="toggleCalculator()" class="text-slate-400 hover:text-white font-black text-sm px-2">✕</button>
     </div>
     
-    <!-- Screen Display -->
+    <!-- Layar Display -->
     <div class="p-3 bg-slate-950">
       <div id="calc-history" class="text-right text-[11px] text-slate-400 min-h-[16px] overflow-x-auto font-mono"></div>
       <input type="text" id="calc-display" readonly value="0" class="w-full bg-transparent text-right text-xl font-bold font-mono text-cyan-300 focus:outline-none select-all">
     </div>
 
-    <!-- Keypad Grid -->
-    <div class="p-3 grid grid-cols-5 gap-1.5 bg-slate-900 text-[11px]">
-      <!-- Row 1 -->
-      <button onclick="calcInput('rad/deg')" id="calc-angle-btn" class="bg-slate-700 text-amber-300 font-bold py-2 rounded-lg text-xs">DEG</button>
-      <button onclick="calcFunc('sin')" class="calc-fn">sin</button>
-      <button onclick="calcFunc('cos')" class="calc-fn">cos</button>
-      <button onclick="calcFunc('tan')" class="calc-fn">tan</button>
+    <!-- Tombol Keypad Lengkap (Inline Styling Aman) -->
+    <div class="p-2.5 grid grid-cols-5 gap-1.5 bg-slate-900 text-[11px]">
+      <!-- Baris 1 -->
+      <button onclick="calcInput('rad/deg')" id="calc-angle-btn" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-lg text-xs">DEG</button>
+      <button onclick="calcFunc('sin')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">sin</button>
+      <button onclick="calcFunc('cos')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">cos</button>
+      <button onclick="calcFunc('tan')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">tan</button>
       <button onclick="calcClear()" class="bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-lg text-xs">AC</button>
 
-      <!-- Row 2 -->
-      <button onclick="calcFunc('ln')" class="calc-fn">ln</button>
-      <button onclick="calcFunc('log')" class="calc-fn">log</button>
-      <button onclick="calcFunc('sqrt')" class="calc-fn">√</button>
-      <button onclick="calcOp('^')" class="calc-fn">xʸ</button>
+      <!-- Baris 2 -->
+      <button onclick="calcFunc('ln')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">ln</button>
+      <button onclick="calcFunc('log')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">log</button>
+      <button onclick="calcFunc('sqrt')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">√</button>
+      <button onclick="calcOp('^')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">xʸ</button>
       <button onclick="calcBackspace()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-lg text-xs">DEL</button>
 
-      <!-- Row 3 -->
-      <button onclick="calcInput('(')" class="calc-btn">(</button>
-      <button onclick="calcInput(')')" class="calc-btn">)</button>
-      <button onclick="calcFunc('inv')" class="calc-fn">1/x</button>
-      <button onclick="calcFunc('sqr')" class="calc-fn">x²</button>
-      <button onclick="calcOp('/')" class="calc-op">÷</button>
+      <!-- Baris 3 -->
+      <button onclick="calcInput('(')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-lg text-xs">(</button>
+      <button onclick="calcInput(')')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-lg text-xs">)</button>
+      <button onclick="calcFunc('inv')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">1/x</button>
+      <button onclick="calcFunc('sqr')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">x²</button>
+      <button onclick="calcOp('/')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">÷</button>
 
-      <!-- Row 4 -->
-      <button onclick="calcConst('pi')" class="calc-fn">π</button>
-      <button onclick="calcInput('7')" class="calc-btn">7</button>
-      <button onclick="calcInput('8')" class="calc-btn">8</button>
-      <button onclick="calcInput('9')" class="calc-btn">9</button>
-      <button onclick="calcOp('*')" class="calc-op">×</button>
+      <!-- Baris 4 -->
+      <button onclick="calcConst('pi')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">π</button>
+      <button onclick="calcInput('7')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">7</button>
+      <button onclick="calcInput('8')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">8</button>
+      <button onclick="calcInput('9')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">9</button>
+      <button onclick="calcOp('*')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">×</button>
 
-      <!-- Row 5 -->
-      <button onclick="calcConst('e')" class="calc-fn">e</button>
-      <button onclick="calcInput('4')" class="calc-btn">4</button>
-      <button onclick="calcInput('5')" class="calc-btn">5</button>
-      <button onclick="calcInput('6')" class="calc-btn">6</button>
-      <button onclick="calcOp('-')" class="calc-op">−</button>
+      <!-- Baris 5 -->
+      <button onclick="calcConst('e')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">e</button>
+      <button onclick="calcInput('4')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">4</button>
+      <button onclick="calcInput('5')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">5</button>
+      <button onclick="calcInput('6')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">6</button>
+      <button onclick="calcOp('-')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">−</button>
 
-      <!-- Row 6 -->
-      <button onclick="calcFunc('10pow')" class="calc-fn">10ˣ</button>
-      <button onclick="calcInput('1')" class="calc-btn">1</button>
-      <button onclick="calcInput('2')" class="calc-btn">2</button>
-      <button onclick="calcInput('3')" class="calc-btn">3</button>
-      <button onclick="calcOp('+')" class="calc-op">+</button>
+      <!-- Baris 6 -->
+      <button onclick="calcFunc('10pow')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">10ˣ</button>
+      <button onclick="calcInput('1')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">1</button>
+      <button onclick="calcInput('2')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">2</button>
+      <button onclick="calcInput('3')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">3</button>
+      <button onclick="calcOp('+')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">+</button>
 
-      <!-- Row 7 -->
-      <button onclick="calcFunc('exp')" class="calc-fn">EXP</button>
-      <button onclick="calcInput('0')" class="calc-btn">0</button>
-      <button onclick="calcInput('.')" class="calc-btn">.</button>
-      <button onclick="calcFunc('pm')" class="calc-btn">±</button>
-      <button onclick="calcEquals()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs shadow">=</button>
+      <!-- Baris 7 -->
+      <button onclick="calcFunc('exp')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">EXP</button>
+      <button onclick="calcInput('0')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">0</button>
+      <button onclick="calcInput('.')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">.</button>
+      <button onclick="calcFunc('pm')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 rounded-lg text-xs">±</button>
+      <button onclick="calcEquals()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2 rounded-lg text-sm shadow">=</button>
     </div>
   </div>
 
   <!-- SCRIPT ENGINE -->
   <script>
     const VALID_TOKEN = "FISIKA12";
+    const TEACHER_PIN = "GURU18";
 
-    // 5 PAKET SOAL STANDARISASI SETARA
     const questionPackets = {
       "Paket A": [
         { id: 1, topic: "Gaya Listrik (Keseimbangan Muatan)", text: "Dua muatan titik q₁ = +4 μC dan q₂ = +9 μC terpisah pada jarak 50 cm di udara. Sebuah muatan uji q₃ = -2 μC diletakkan di antara kedua muatan pada garis hubungnya sedemikian rupa sehingga gaya Coulomb total pada q₃ bernilai NOL. Hitunglah jarak letak muatan q₃ diukur dari muatan q₁!" },
@@ -319,7 +325,6 @@
       ]
     };
 
-    // Tempel URL Web App Google Apps Script di sini
     const GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz_lyVFdwqQnGtuxZfn56FEu3WNT2qwPjTqsvHM12qJNssur_nsSbLL-In8nmgtQWQF/exec";
 
     let currentIdx = 0;
@@ -346,7 +351,6 @@
         document.getElementById('cheat-badge').classList.remove('hidden');
         document.getElementById('cheat-badge').classList.add('flex');
         document.getElementById('cheat-count-display').textContent = tabSwitchCount;
-        
         saveToLocalStorage();
 
         if (tabSwitchCount >= 3) {
@@ -388,6 +392,18 @@
       document.getElementById('timer-box').classList.add('hidden');
       document.getElementById('step-blocked').classList.remove('hidden');
       document.getElementById('block-student-info').textContent = `${data.name} | ${data.class} (Absen: ${data.nis}) - [${data.packet}]`;
+    }
+
+    function unlockStudentSession() {
+      const pin = document.getElementById('teacher-pin-input').value.trim();
+      if (pin === TEACHER_PIN) {
+        localStorage.removeItem('cbt_physics_uas_session');
+        localStorage.removeItem('cbt_completed_submissions');
+        alert("Sesi berhasil direset oleh Guru. Siswa sekarang dapat masuk dan mengerjakan ujian kembali.");
+        location.reload();
+      } else {
+        alert("PIN Guru Salah!");
+      }
     }
 
     function saveToLocalStorage() {
@@ -752,9 +768,7 @@
       doc.save(`Ujian_Fisika_${studentData.name}_Absen_${studentData.nis}_${selectedPacketName}.pdf`);
     }
 
-    // -------------------------------------------------------------
-    // LOGIKA KALKULATOR SAINS TERINTEGRASI
-    // -------------------------------------------------------------
+    // LOGIKA KALKULATOR SAINS (NATIVE STRING EVALUATION)
     let calcExpr = "";
     let isDeg = true;
 
