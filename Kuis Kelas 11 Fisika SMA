@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Asesmen Fisika XI - Vektor HOTS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
+    .canvas-container { touch-action: none; }
+  </style>
+</head>
+<body class="bg-slate-200 text-slate-900 min-h-screen flex flex-col justify-between select-none">
+
+  <!-- HEADER -->
+  <header class="bg-slate-800 text-white border-b border-slate-700 sticky top-0 z-40 px-4 py-3 shadow-md">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow">
+          🧭
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">Asesmen Analisis Vektor XI</h1>
+          <p class="text-xs text-slate-300">Pengampu: Fadhillah Umar, S.Pd. • <span id="header-packet" class="font-bold text-amber-300">Kelas XI-1</span></p>
+        </div>
+      </div>
+
+      <!-- TIMER & CHEAT BADGE -->
+      <div class="flex items-center space-x-2">
+        <div id="cheat-badge" class="hidden items-center bg-rose-900/80 border border-rose-500 px-2.5 py-1 rounded-lg text-xs text-rose-200 font-bold animate-pulse">
+          ⚠️ Peringatan Tab: <span id="cheat-count-display" class="ml-1 text-white">0</span>/3
+        </div>
+        <div id="timer-box" class="hidden items-center space-x-2 bg-slate-900 px-3.5 py-1.5 rounded-xl border border-slate-700">
+          <span class="text-amber-400">⏱️</span>
+          <span id="timer-display" class="font-mono text-sm sm:text-base font-bold text-amber-300">60:00</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto w-full p-3 sm:p-4 flex-1 flex flex-col justify-center">
+
+    <!-- STEP 1: LOGIN IDENTITAS & TOKEN -->
+    <section id="step-identity" class="max-w-md mx-auto w-full bg-slate-100 p-6 sm:p-8 rounded-3xl border-2 border-slate-300 shadow-xl my-auto">
+      <div class="text-center mb-6">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full border border-indigo-200">Asesmen Analisis HOTS (5 Paket Setara)</span>
+        <h2 class="text-2xl font-black mt-3 text-slate-900">Identitas Siswa</h2>
+        <p class="text-slate-600 text-xs mt-1">Gunakan papan coret dan kalkulator sains terintegrasi untuk menganalisis soal.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">Nama Lengkap Siswa</label>
+          <input type="text" id="student-name" placeholder="Nama lengkap sesuai absensi" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Kelas</label>
+            <select id="student-class" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+              <option value="XI-1">XI-1</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Nomor Absen</label>
+            <input type="number" id="student-nis" placeholder="Nomor Absen (1-36)" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-semibold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">Token Ujian</label>
+          <input type="text" id="exam-token" placeholder="Masukkan TOKEN (cth: VEKTOR11)" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-300 text-sm font-mono uppercase font-bold focus:outline-none focus:border-indigo-600 text-slate-900 transition">
+        </div>
+
+        <div class="pt-2">
+          <button onclick="startExam()" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 font-bold text-sm rounded-xl shadow-lg transition active:scale-95 text-white flex items-center justify-center space-x-2">
+            <span>Masuk & Kerjakan Ujian</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: INTERFACE UJIAN & WHITEBOARD POLOS -->
+    <section id="step-exam" class="hidden flex-col lg:flex-row gap-5 my-auto">
+      
+      <!-- KIRI: SOAL & INPUT HASIL AKHIR -->
+      <div class="lg:w-5/12 flex flex-col justify-between bg-slate-100 p-5 rounded-3xl border-2 border-slate-300 shadow-md space-y-4">
+        <div>
+          <div class="flex items-center justify-between border-b border-slate-300 pb-3 mb-3">
+            <span id="soal-badge" class="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-lg shadow-sm">Soal 1 dari 5</span>
+            <span id="materi-badge" class="text-xs text-amber-900 bg-amber-100 px-2.5 py-1 rounded-md font-bold border border-amber-300">Topik: Analisis Vektor</span>
+          </div>
+
+          <div class="min-h-[160px] bg-white p-4 rounded-2xl border border-slate-300 shadow-sm">
+            <p id="question-text" class="text-sm font-semibold text-slate-900 leading-relaxed"></p>
+          </div>
+
+          <div class="mt-4">
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Hasil Akhir Perhitungan (Wajib Diisi):</label>
+            <input type="text" id="final-answer-input" oninput="saveCurrentQuestionState()" placeholder="Tulis jawaban akhir lengkap dengan satuan" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm font-bold focus:outline-none focus:border-indigo-600 text-slate-900">
+          </div>
+        </div>
+
+        <!-- NAVIGASI NOMOR -->
+        <div class="pt-3 border-t border-slate-300 flex items-center justify-between gap-2">
+          <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 py-2 rounded-xl bg-slate-300 hover:bg-slate-400 text-xs font-bold transition disabled:opacity-40 disabled:cursor-not-allowed text-slate-800">
+            ⬅ Sebelumnya
+          </button>
+          
+          <div class="flex gap-1.5 overflow-x-auto" id="soal-pills"></div>
+
+          <button id="btn-next" onclick="nextQuestion()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-bold transition text-white">
+            Berikutnya ➡
+          </button>
+        </div>
+      </div>
+
+      <!-- KANAN: PAPAN CORET SKETSA & RUMUS -->
+      <div class="lg:w-7/12 bg-slate-100 p-4 sm:p-5 rounded-3xl border-2 border-slate-300 shadow-md flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-300 text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-slate-900">✍️ Sketsa & Langkah Pengerjaan</span>
+            <span class="text-[11px] text-slate-600 hidden sm:inline">(Tersimpan per nomor)</span>
+          </div>
+
+          <!-- TOOLBAR WHITEBOARD -->
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <button onclick="toggleCalculator()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs shadow-sm flex items-center space-x-1">
+              <span>🧮</span>
+              <span>Kalkulator</span>
+            </button>
+            <button onclick="setTool('pen')" id="tool-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs">Pena</button>
+            <button onclick="setTool('eraser')" id="tool-eraser" class="px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs">Penghapus</button>
+            
+            <div class="flex items-center space-x-1.5 bg-white px-2 py-1 rounded-lg border border-slate-300">
+              <button onclick="setColor('#0f172a')" class="w-4 h-4 rounded-full bg-slate-900 border border-slate-400" title="Hitam"></button>
+              <button onclick="setColor('#1d4ed8')" class="w-4 h-4 rounded-full bg-blue-700" title="Biru"></button>
+              <button onclick="setColor('#b91c1c')" class="w-4 h-4 rounded-full bg-red-700" title="Merah"></button>
+            </div>
+
+            <button onclick="clearCurrentCanvas()" class="px-2.5 py-1.5 rounded-lg bg-rose-100 border border-rose-300 text-rose-800 hover:bg-rose-200 font-bold text-xs">Reset</button>
+          </div>
+        </div>
+
+        <!-- CANVAS WHITEBOARD AREA -->
+        <div class="relative w-full flex-1 bg-white rounded-2xl border-2 border-slate-300 overflow-hidden canvas-container min-h-[380px] flex items-center justify-center shadow-inner">
+          <canvas id="whiteboard" class="w-full h-full cursor-crosshair"></canvas>
+          <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-slate-500 bg-white/95 px-2 py-1 rounded border border-slate-300 shadow-sm font-medium">
+            Gambarkan diagram vektor gaya/lintasan dan tulis langkah perhitungannya di sini
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-[11px] text-emerald-700 font-bold flex items-center">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 mr-1.5 animate-pulse"></span> Auto-save tersimpan
+          </span>
+          <button onclick="finishExamPrompt()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-xs sm:text-sm font-bold shadow-md transition text-white">
+            Kirim Lembar Jawaban Ujian ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: HALAMAN SELESAI -->
+    <section id="step-result" class="hidden max-w-lg mx-auto w-full bg-slate-100 p-7 sm:p-10 rounded-3xl border-2 border-slate-300 shadow-xl text-center my-auto">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-2xl border border-emerald-300 mx-auto flex items-center justify-center text-3xl mb-4">
+        ✓
+      </div>
+      <h2 class="text-xl sm:text-2xl font-black text-slate-900">Selamat, Anda Telah Mengerjakan!</h2>
+      <p class="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed font-medium">
+        Seluruh lembar pengerjaan dan coretan sketsa rumus Anda telah berhasil terekam ke database guru mata pelajaran. Berdoalah supaya hasil nilainya maksimal!
+      </p>
+
+      <div class="my-6 p-4 rounded-2xl bg-white border border-slate-300 text-left text-xs space-y-2 text-slate-800 shadow-sm">
+        <div><strong class="text-slate-500">Nama Lengkap:</strong> <span id="res-name" class="font-bold text-slate-900"></span></div>
+        <div><strong class="text-slate-500">Kelas / Absen:</strong> <span id="res-class" class="font-bold text-slate-900"></span></div>
+        <div><strong class="text-slate-500">Paket Soal:</strong> <span id="res-packet" class="font-bold text-indigo-700"></span></div>
+        <div><strong class="text-slate-500">Status Pengerjaan:</strong> <span id="res-answered" class="font-bold text-emerald-700"></span></div>
+        <div><strong class="text-slate-500">Total Pelanggaran Tab:</strong> <span id="res-cheat" class="font-bold text-rose-600"></span></div>
+        <div><strong class="text-slate-500">Waktu Pengiriman:</strong> <span id="res-time" class="font-bold text-slate-900"></span></div>
+      </div>
+
+      <div class="space-y-3">
+        <button onclick="downloadPDFBackup()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-900 font-bold text-xs rounded-xl text-white shadow transition flex items-center justify-center space-x-2">
+          <span>📄 Unduh Dokumen PDF Jawaban (Arsip Cadangan)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 4: BLOKIR AKSES & MENU BUKA KUNCI GURU -->
+    <section id="step-blocked" class="hidden max-w-md mx-auto w-full bg-slate-100 p-8 rounded-3xl border-2 border-rose-300 shadow-xl text-center my-auto">
+      <div class="w-16 h-16 bg-rose-100 text-rose-700 rounded-2xl border border-rose-300 mx-auto flex items-center justify-center text-3xl mb-4">
+        🔒
+      </div>
+      <h2 class="text-xl font-black text-slate-900">Akses Ujian Ditutup</h2>
+      <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+        Siswa dengan identitas ini tercatat telah menyelesaikan dan mengirimkan ujian ke sistem.
+      </p>
+      <div class="my-4 p-3 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700" id="block-student-info"></div>
+
+      <!-- OPSI BUKA KUNCI GURU -->
+      <div class="mt-4 pt-4 border-t border-slate-300">
+        <p class="text-[11px] text-slate-500 mb-2">Ingin membuka sesi ujian baru? Masukkan PIN Guru Pengampu:</p>
+        <div class="flex gap-2">
+          <input type="password" id="teacher-pin-input" placeholder="PIN Guru" class="w-2/3 px-3 py-2 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-900 text-center">
+          <button onclick="unlockStudentSession()" class="w-1/3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">Buka Kunci</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL KALKULATOR SAINS TERINTEGRASI -->
+  <div id="calc-modal" class="hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[340px] sm:w-[380px] bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="bg-slate-800 px-4 py-2 flex items-center justify-between border-b border-slate-700">
+      <div class="flex items-center space-x-2">
+        <span class="text-amber-400">🧮</span>
+        <span class="text-xs font-bold text-white tracking-wide">Kalkulator Sains Fisika</span>
+      </div>
+      <button onclick="toggleCalculator()" class="text-slate-400 hover:text-white font-black text-sm px-2">✕</button>
+    </div>
+    
+    <!-- Layar Display -->
+    <div class="p-3 bg-slate-950">
+      <div id="calc-history" class="text-right text-[11px] text-slate-400 min-h-[16px] overflow-x-auto font-mono"></div>
+      <input type="text" id="calc-display" readonly value="0" class="w-full bg-transparent text-right text-xl font-bold font-mono text-cyan-300 focus:outline-none select-all">
+    </div>
+
+    <!-- Tombol Keypad Lengkap -->
+    <div class="p-2.5 grid grid-cols-5 gap-1.5 bg-slate-900 text-[11px]">
+      <button onclick="calcInput('rad/deg')" id="calc-angle-btn" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-lg text-xs">DEG</button>
+      <button onclick="calcFunc('sin')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">sin</button>
+      <button onclick="calcFunc('cos')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">cos</button>
+      <button onclick="calcFunc('tan')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">tan</button>
+      <button onclick="calcClear()" class="bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-lg text-xs">AC</button>
+
+      <button onclick="calcFunc('ln')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">ln</button>
+      <button onclick="calcFunc('log')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">log</button>
+      <button onclick="calcFunc('sqrt')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">√</button>
+      <button onclick="calcOp('^')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">xʸ</button>
+      <button onclick="calcBackspace()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold py-2 rounded-lg text-xs">DEL</button>
+
+      <button onclick="calcInput('(')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-lg text-xs">(</button>
+      <button onclick="calcInput(')')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-lg text-xs">)</button>
+      <button onclick="calcFunc('inv')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">1/x</button>
+      <button onclick="calcFunc('sqr')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">x²</button>
+      <button onclick="calcOp('/')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">÷</button>
+
+      <button onclick="calcConst('pi')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">π</button>
+      <button onclick="calcInput('7')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">7</button>
+      <button onclick="calcInput('8')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">8</button>
+      <button onclick="calcInput('9')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">9</button>
+      <button onclick="calcOp('*')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">×</button>
+
+      <button onclick="calcConst('e')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">e</button>
+      <button onclick="calcInput('4')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">4</button>
+      <button onclick="calcInput('5')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">5</button>
+      <button onclick="calcInput('6')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">6</button>
+      <button onclick="calcOp('-')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">−</button>
+
+      <button onclick="calcFunc('10pow')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">10ˣ</button>
+      <button onclick="calcInput('1')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">1</button>
+      <button onclick="calcInput('2')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">2</button>
+      <button onclick="calcInput('3')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">3</button>
+      <button onclick="calcOp('+')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2 rounded-lg text-sm">+</button>
+
+      <button onclick="calcFunc('exp')" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 font-bold py-2 rounded-lg text-xs border border-indigo-800">EXP</button>
+      <button onclick="calcInput('0')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">0</button>
+      <button onclick="calcInput('.')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-lg text-sm">.</button>
+      <button onclick="calcFunc('pm')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 rounded-lg text-xs">±</button>
+      <button onclick="calcEquals()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2 rounded-lg text-sm shadow">=</button>
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    const VALID_TOKEN = "VEKTOR11";
+    const TEACHER_PIN = "GURU18";
+
+    // 5 PAKET SOAL HOTS KELAS 11 (TANPA i, j, k & MENGGUNAKAN SUDUT REALISTIS)
+    const questionPackets = {
+      "Paket A": [
+        { id: 1, topic: "Penguraian Komponen Gaya", text: "Sebuah balok ditarik di atas lantai mendatar oleh tali dengan gaya tegangan F = 250 N yang membentuk sudut elevasi 28° terhadap lantai. Uraikan vektor gaya tersebut dan hitunglah besar gaya yang efektif menarik balok maju secara mendatar (Fx) serta gaya yang mengangkat balok ke atas (Fy)!" },
+        { id: 2, topic: "Vektor Kecepatan Aliran Sungai", text: "Sebuah perahu bermotor melintasi sungai selebar 120 meter dengan kecepatan mesin 8 m/s diarahkan tegak lurus ke seberang sungai (arah Utara). Arus sungai mengalir ke arah Timur dengan kecepatan tetap 6 m/s. Gambarkan sketsa lintasannya, hitung besar resultan kecepatan perahu (v_total), dan hitung jarak pergeseran perahu ke arah hilir saat tiba di seberang!" },
+        { id: 3, topic: "Resultan Gaya Konstruksi (Aturan Kosinus)", text: "Dua kabel baja menopang sebuah beban pada jembatan gantung. Kabel pertama menarik dengan gaya F₁ = 400 N dan kabel kedua menarik dengan gaya F₂ = 300 N. Jika kedua kabel membentuk sudut apit 74°, hitunglah besar resultan gaya tarik total (R) yang bekerja pada titik sambungan jembatan tersebut!" },
+        { id: 4, topic: "Analisis Resultan Tiga Gaya (Metode Komponen)", text: "Tiga gaya sebidang bekerja pada sebuah titik partikel: F₁ = 50 N ke arah Timur (0°), F₂ = 60 N membentuk sudut 40° ke arah Utara dari Timur, dan F₃ = 30 N tepat ke arah Utara (90°). Hitunglah jumlah komponen gaya sumbu-x (ΣFx), jumlah komponen sumbu-y (ΣFy), serta tentukan besar resultan gaya totalnya!" },
+        { id: 5, topic: "Perkalian Skalar & Vektor Konseptual", text: "Sebuah peti ditarik dengan gaya tetap F = 180 N sejauh 15 meter pada lintasan mendatar, di mana arah gaya membentuk sudut 35° terhadap arah perpindahannya. Hitunglah besar usaha mekanik (W = F · s · cos θ) yang bekerja pada peti, serta jelaskan mengapa gaya yang tegak lurus perpindahan tidak menghasilkan usaha!" }
+      ],
+      "Paket B": [
+        { id: 1, topic: "Penguraian Komponen Gaya", text: "Sebuah gerobak didorong dengan gaya F = 320 N membentuk sudut 32° ke bawah terhadap garis horizontal. Uraikan vektor gaya tersebut dan hitung komponen gaya yang menekan ke tanah (Fy) serta komponen gaya yang mendorong gerobak maju (Fx)!" },
+        { id: 2, topic: "Vektor Kecepatan Aliran Sungai", text: "Perahu diarahkan tegak lurus melintasi sungai berarus deras dengan kecepatan 12 m/s ke arah Utara. Arus air sungai bergerak ke arah Timur dengan kelajuan 5 m/s. Jika lebar sungai adalah 180 meter, tentukan besar resultan kecepatan perahu dan tentukan sudut penyimpangan lintasan perahu terhadap arah Utara!" },
+        { id: 3, topic: "Resultan Gaya Konstruksi (Aturan Kosinus)", text: "Dua tali derek menarik sebuah mobil mogok secara bersamaan. Tali A menarik dengan gaya 500 N dan Tali B menarik dengan gaya 450 N dengan sudut apit sebesar 68°. Hitunglah besar resultan gaya tarik total yang dialami mobil tersebut!" },
+        { id: 4, topic: "Analisis Resultan Tiga Gaya (Metode Komponen)", text: "Tiga orang menarik beban pada titik yang sama: Gaya F₁ = 40 N ke arah Barat (180°), F₂ = 70 N membentuk sudut 55° Utara dari Timur (55°), dan F₃ = 50 N ke arah Selatan (270°). Hitunglah nilai ΣFx, ΣFy, serta besar resultan gaya akhirnya!" },
+        { id: 5, topic: "Perkalian Skalar & Vektor Konseptual", text: "Seseorang menarik koper seberat 200 N sejauh 25 meter di bandara dengan gaya tarik F = 80 N membentuk sudut 42° terhadap lantai. Hitunglah usaha yang dilakukan oleh gaya tarik tersebut (W = F · s · cos θ) dan tentukan usaha yang dilakukan oleh gaya berat koper!" }
+      ],
+      "Paket C": [
+        { id: 1, topic: "Penguraian Komponen Gaya", text: "Sebuah roket uji meluncur dengan kecepatan 450 m/s pada sudut elevasi 65° terhadap permukaan tanah mendatar. Tentukan besar komponen kecepatan horizontal roket (vx) dan komponen kecepatan vertikal roket saat itu (vy)!" },
+        { id: 2, topic: "Vektor Kecepatan Aliran Sungai", text: "Sebuah kapal boat melaju tegak lurus menyeberangi sungai selebar 200 meter dengan kelajuan 15 m/s ke arah Barat. Arus sungai mengalir ke arah Selatan dengan kelajuan 8 m/s. Hitunglah besar resultan kecepatan kapal dan jarak total yang ditempuh kapal hingga tiba di seberang!" },
+        { id: 3, topic: "Resultan Gaya Konstruksi (Aturan Kosinus)", text: "Dua kabel penahan tiang pemancar radio menahan gaya masing-masing F₁ = 600 N dan F₂ = 400 N. Kedua kabel saling mengapit sudut sebesar 115°. Hitunglah besar resultan gaya total yang dialami pangkal tiang pemancar tersebut!" },
+        { id: 4, topic: "Analisis Resultan Tiga Gaya (Metode Komponen)", text: "Sebuah benda di titik pusat ditarik tiga gaya sebidang: F₁ = 80 N membentuk sudut 25° terhadap sumbu-x positif, F₂ = 60 N membentuk sudut 120° terhadap sumbu-x positif, dan F₃ = 40 N tepat ke arah sumbu-y negatif (270°). Hitung komponen total ΣFx, ΣFy, dan resultan gayanya!" },
+        { id: 5, topic: "Perkalian Skalar & Vektor Konseptual", text: "Sebuah gaya dorong sebesar F = 150 N bekerja pada pintu dengan jarak engsel (lengan gaya) r = 0,8 meter membentuk sudut 70° terhadap daun pintu. Hitunglah besar momen gaya / torsi (τ = F · r · sin θ) yang memutar pintu tersebut!" }
+      ],
+      "Paket D": [
+        { id: 1, topic: "Penguraian Komponen Gaya", text: "Sebuah layang-layang ditarik oleh benang dengan tegangan F = 160 N yang membentuk sudut kemiringan 48° terhadap garis horizontal tanah. Uraikan gaya tersebut ke dalam komponen horizontal (Fx) dan komponen vertikal (Fy)!" },
+        { id: 2, topic: "Vektor Kecepatan Aliran Sungai", text: "Perahu melintasi sungai berarus selebar 150 meter. Kecepatan perahu tegak lurus arus adalah 9 m/s (arah Selatan) dan kecepatan arus sungai ke arah Timur adalah 12 m/s. Hitunglah besar resultan kecepatan perahu dan waktu yang dibutuhkan perahu untuk tiba di tepi seberang!" },
+        { id: 3, topic: "Resultan Gaya Konstruksi (Aturan Kosinus)", text: "Dua vektor gaya saling menarik sebuah ring baja dengan nilai F₁ = 350 N dan F₂ = 250 N. Sudut apit yang dibentuk oleh kedua vektor tersebut adalah 52°. Hitunglah besar resultan gaya tarik total yang terjadi pada ring tersebut!" },
+        { id: 4, topic: "Analisis Resultan Tiga Gaya (Metode Komponen)", text: "Tiga gaya bekerja pada satu titik partikel: F₁ = 100 N ke arah Timur (0°), F₂ = 80 N membentuk sudut 62° Utara dari Timur, dan F₃ = 60 N ke arah Barat (180°). Tentukan nilai komponen total ΣFx, ΣFy, serta besar resultan gaya gabungannya!" },
+        { id: 5, topic: "Perkalian Skalar & Vektor Konseptual", text: "Gaya F = 220 N digunakan untuk menggeser balok sejauh 18 meter. Jika tali penarik membentuk sudut 24° terhadap arah pergeseran balok, hitunglah besar usaha yang dihasilkan gaya tersebut (W = F · s · cos θ)!" }
+      ],
+      "Paket E": [
+        { id: 1, topic: "Penguraian Komponen Gaya", text: "Sebuah pesawat helikopter mendarat meluncur dengan kecepatan 80 m/s menukik ke bawah pada sudut 22° di bawah garis horizontal. Tentukan besar komponen kecepatan horizontal helikopter (vx) dan komponen kecepatan vertikal ke bawah (vy)!" },
+        { id: 2, topic: "Vektor Kecepatan Aliran Sungai", text: "Perahu menyeberangi sungai selebar 240 meter dengan kecepatan mesin 16 m/s tegak lurus arah aliran sungai. Kecepatan aliran arus air adalah 12 m/s. Hitunglah resultan kelajuan perahu serta tentukan jarak penyimpangan perahu di seberang sungai diukur dari titik tepat di depan titik berangkat!" },
+        { id: 3, topic: "Resultan Gaya Konstruksi (Aturan Kosinus)", text: "Dua tali parasut menahan seorang penerjun dengan gaya tegangan masing-masing T₁ = 480 N dan T₂ = 520 N. Jika kedua tali membentuk sudut apit sebesar 38°, hitunglah besar resultan gaya penahan total yang dialami penerjun tersebut!" },
+        { id: 4, topic: "Analisis Resultan Tiga Gaya (Metode Komponen)", text: "Tiga buah gaya sebidang bekerja pada sebuah cincin besi: F₁ = 75 N ke arah sumbu-x positif (0°), F₂ = 90 N membentuk sudut 48° terhadap sumbu-x positif, dan F₃ = 50 N ke arah sumbu-y positif (90°). Hitunglah nilai ΣFx, ΣFy, serta besar resultan vektor totalnya!" },
+        { id: 5, topic: "Perkalian Skalar & Vektor Konseptual", text: "Kunci inggris sepanjang r = 0,35 meter digunakan untuk membuka baut dengan gaya F = 140 N yang ditarik membentuk sudut 78° terhadap gagang kunci. Hitung besar momen gaya / torsi putar yang dihasilkan (τ = F · r · sin θ)!" }
+      ]
+    };
+
+    const GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxQr7O-W3to--Oj8f6_RALSorRl-rWOd8BwcOjlr-vCU0z3UU70FImMLYDy_U7awNZ9Dw/exec";
+
+    let currentIdx = 0;
+    let selectedPacketName = "Paket A";
+    let questions = questionPackets["Paket A"];
+    let studentData = { name: "", class: "XI-1", nis: "", packet: "Paket A" };
+    let canvasDataStore = {};
+    let textDataStore = {};
+    let timerSeconds = 60 * 60;
+    let timerInterval = null;
+    let tabSwitchCount = 0;
+
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentTool = 'pen';
+    let currentColor = '#0f172a';
+    let lineWidth = 2.5;
+
+    // DETEKSI KECURANGAN PINDAH TAB
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && !document.getElementById('step-exam').classList.contains('hidden')) {
+        tabSwitchCount++;
+        document.getElementById('cheat-badge').classList.remove('hidden');
+        document.getElementById('cheat-badge').classList.add('flex');
+        document.getElementById('cheat-count-display').textContent = tabSwitchCount;
+        saveToLocalStorage();
+
+        if (tabSwitchCount >= 3) {
+          alert(`PERINGATAN DARI GURU (Fadhillah Umar, S.Pd.):\nAnda terdeteksi telah meninggalkan tab ujian sebanyak ${tabSwitchCount} kali! Catatan ini otomatis terkirim ke Google Sheets dan nilai Anda akan dikurangi.`);
+        } else {
+          alert(`Peringatan (${tabSwitchCount}/3): Dilarang membuka tab atau aplikasi lain selama ujian berlangsung!`);
+        }
+      }
+    });
+
+    // RESTORE STATE SESSION
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('cbt_physics_xi_hots_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        studentData = parsed.studentData || {};
+        selectedPacketName = studentData.packet || "Paket A";
+        questions = questionPackets[selectedPacketName] || questionPackets["Paket A"];
+        canvasDataStore = parsed.canvasDataStore || {};
+        textDataStore = parsed.textDataStore || {};
+        timerSeconds = parsed.timerSeconds || 60 * 60;
+        tabSwitchCount = parsed.tabSwitchCount || 0;
+
+        if (parsed.isFinished) {
+          showBlockedScreen(studentData);
+          return;
+        }
+
+        if (studentData.name) {
+          launchExamUI();
+        }
+      }
+    });
+
+    function showBlockedScreen(data) {
+      document.getElementById('step-identity').classList.add('hidden');
+      document.getElementById('step-exam').classList.add('hidden');
+      document.getElementById('step-result').classList.add('hidden');
+      document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('step-blocked').classList.remove('hidden');
+      document.getElementById('block-student-info').textContent = `${data.name} | ${data.class} (Absen: ${data.nis}) - [${data.packet}]`;
+    }
+
+    function unlockStudentSession() {
+      const pin = document.getElementById('teacher-pin-input').value.trim();
+      if (pin === TEACHER_PIN) {
+        localStorage.removeItem('cbt_physics_xi_hots_session');
+        localStorage.removeItem('cbt_completed_submissions_xi_hots');
+        alert("Sesi berhasil direset oleh Guru. Siswa sekarang dapat masuk dan mengerjakan ujian kembali.");
+        location.reload();
+      } else {
+        alert("PIN Guru Salah!");
+      }
+    }
+
+    function saveToLocalStorage() {
+      const session = {
+        studentData,
+        canvasDataStore,
+        textDataStore,
+        timerSeconds,
+        tabSwitchCount,
+        isFinished: false
+      };
+      localStorage.setItem('cbt_physics_xi_hots_session', JSON.stringify(session));
+    }
+
+    function determinePacket(absenNum) {
+      const packets = ["Paket A", "Paket B", "Paket C", "Paket D", "Paket E"];
+      const num = parseInt(absenNum) || 1;
+      return packets[(num - 1) % 5];
+    }
+
+    function startExam() {
+      const name = document.getElementById('student-name').value.trim();
+      const studentClass = document.getElementById('student-class').value;
+      const nis = document.getElementById('student-nis').value.trim();
+      const token = document.getElementById('exam-token').value.trim().toUpperCase();
+
+      if (!name || !nis) {
+        alert("Silakan lengkapi Nama Siswa dan Nomor Absen!");
+        return;
+      }
+      if (token !== VALID_TOKEN) {
+        alert("Token Ujian Salah! Masukkan token resmi: VEKTOR11");
+        return;
+      }
+
+      const completedList = JSON.parse(localStorage.getItem('cbt_completed_submissions_xi_hots') || '[]');
+      const isAlreadySubmitted = completedList.some(item => item.name.toLowerCase() === name.toLowerCase() && item.nis === nis);
+      if (isAlreadySubmitted) {
+        alert("Nama dan Nomor Absen ini telah tercatat mengirimkan ujian sebelumnya!");
+        showBlockedScreen({ name, class: studentClass, nis, packet: determinePacket(nis) });
+        return;
+      }
+
+      selectedPacketName = determinePacket(nis);
+      questions = questionPackets[selectedPacketName];
+      studentData = { name, class: studentClass, nis, packet: selectedPacketName };
+      saveToLocalStorage();
+      launchExamUI();
+    }
+
+    function launchExamUI() {
+      document.getElementById('step-identity').classList.add('hidden');
+      document.getElementById('step-exam').classList.remove('hidden');
+      document.getElementById('step-exam').classList.add('flex');
+      document.getElementById('timer-box').classList.remove('hidden');
+      document.getElementById('timer-box').classList.add('flex');
+      document.getElementById('header-packet').textContent = `Kelas XI-1 (${selectedPacketName})`;
+
+      if (tabSwitchCount > 0) {
+        document.getElementById('cheat-badge').classList.remove('hidden');
+        document.getElementById('cheat-badge').classList.add('flex');
+        document.getElementById('cheat-count-display').textContent = tabSwitchCount;
+      }
+
+      renderPills();
+      loadQuestion(currentIdx);
+      startTimer();
+      window.addEventListener('resize', handleCanvasResize);
+      setTimeout(handleCanvasResize, 100);
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      const display = document.getElementById('timer-display');
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        const m = Math.floor(timerSeconds / 60);
+        const s = timerSeconds % 60;
+        display.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        
+        if (timerSeconds % 10 === 0) saveToLocalStorage();
+
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          alert("Waktu pengerjaan 60 menit telah habis! Lembar pengerjaan Anda otomatis dikirim.");
+          finishExam();
+        }
+      }, 1000);
+    }
+
+    function handleCanvasResize() {
+      const rect = canvas.getBoundingClientRect();
+      const currentData = canvasDataStore[currentIdx];
+      canvas.width = rect.width * (window.devicePixelRatio || 1);
+      canvas.height = rect.height * (window.devicePixelRatio || 1);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      
+      drawCanvasBackground();
+
+      if (currentData) {
+        const img = new Image();
+        img.src = currentData;
+        img.onload = () => ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      }
+    }
+
+    function drawCanvasBackground() {
+      const rect = canvas.getBoundingClientRect();
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, rect.width, rect.height);
+      ctx.restore();
+    }
+
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDraw(e) {
+      e.preventDefault();
+      isDrawing = true;
+      const pos = getCoords(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getCoords(e);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      if (currentTool === 'eraser') {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 24;
+      } else {
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = lineWidth;
+      }
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function stopDraw(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+      ctx.closePath();
+      saveCurrentQuestionState();
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDraw);
+
+    function setTool(tool) {
+      currentTool = tool;
+      document.getElementById('tool-pen').className = tool === 'pen' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs';
+      document.getElementById('tool-eraser').className = tool === 'eraser' ? 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold text-xs' : 'px-3 py-1.5 rounded-lg bg-slate-300 text-slate-800 font-bold text-xs';
+    }
+
+    function setColor(color) {
+      currentColor = color;
+      setTool('pen');
+    }
+
+    function clearCurrentCanvas() {
+      if (confirm(`Hapus coretan langkah pengerjaan Nomor ${currentIdx + 1}?`)) {
+        drawCanvasBackground();
+        delete canvasDataStore[currentIdx];
+        saveToLocalStorage();
+        updatePills();
+      }
+    }
+
+    function saveCurrentQuestionState() {
+      canvasDataStore[currentIdx] = canvas.toDataURL("image/png");
+      textDataStore[currentIdx] = document.getElementById('final-answer-input').value;
+      saveToLocalStorage();
+      updatePills();
+    }
+
+    function renderPills() {
+      const container = document.getElementById('soal-pills');
+      container.innerHTML = "";
+      questions.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `pill-${idx}`;
+        btn.textContent = idx + 1;
+        btn.className = `w-8 h-8 rounded-lg text-xs font-bold transition ${idx === currentIdx ? 'bg-indigo-600 text-white' : 'bg-slate-300 text-slate-700'}`;
+        btn.onclick = () => {
+          saveCurrentQuestionState();
+          loadQuestion(idx);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function updatePills() {
+      questions.forEach((_, idx) => {
+        const pill = document.getElementById(`pill-${idx}`);
+        if (!pill) return;
+        const hasWork = canvasDataStore[idx] || (textDataStore[idx] && textDataStore[idx].trim() !== "");
+        if (idx === currentIdx) {
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow";
+        } else if (hasWork) {
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-emerald-600 text-white";
+        } else {
+          pill.className = "w-8 h-8 rounded-lg text-xs font-bold bg-slate-300 text-slate-700";
+        }
+      });
+    }
+
+    function loadQuestion(idx) {
+      currentIdx = idx;
+      const q = questions[idx];
+      document.getElementById('soal-badge').textContent = `Soal ${idx + 1} dari ${questions.length} (${selectedPacketName})`;
+      document.getElementById('materi-badge').textContent = `Topik: ${q.topic}`;
+      document.getElementById('question-text').textContent = q.text;
+
+      document.getElementById('btn-prev').disabled = (idx === 0);
+      document.getElementById('btn-next').textContent = (idx === questions.length - 1) ? 'Papan Terakhir' : 'Berikutnya ➡';
+
+      document.getElementById('final-answer-input').value = textDataStore[idx] || "";
+
+      drawCanvasBackground();
+
+      if (canvasDataStore[idx]) {
+        const img = new Image();
+        img.src = canvasDataStore[idx];
+        img.onload = () => ctx.drawImage(img, 0, 0, canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().height);
+      }
+      updatePills();
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        saveCurrentQuestionState();
+        loadQuestion(currentIdx - 1);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIdx < questions.length - 1) {
+        saveCurrentQuestionState();
+        loadQuestion(currentIdx + 1);
+      }
+    }
+
+    function finishExamPrompt() {
+      saveCurrentQuestionState();
+      if (confirm("Apakah Anda yakin ingin menyelesaikan dan mengirim seluruh lembar ujian sekarang? Setelah dikirim, Anda tidak dapat mengakses ujian ini lagi.")) {
+        finishExam();
+      }
+    }
+
+    function finishExam() {
+      clearInterval(timerInterval);
+      saveCurrentQuestionState();
+
+      document.getElementById('step-exam').classList.add('hidden');
+      document.getElementById('step-result').classList.remove('hidden');
+      document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('cheat-badge').classList.add('hidden');
+      document.getElementById('calc-modal').classList.add('hidden');
+
+      document.getElementById('res-name').textContent = studentData.name;
+      document.getElementById('res-class').textContent = `${studentData.class} (Absen: ${studentData.nis})`;
+      document.getElementById('res-packet').textContent = selectedPacketName;
+      
+      const answeredCount = Object.keys(canvasDataStore).length;
+      document.getElementById('res-answered').textContent = `${answeredCount} dari ${questions.length} Soal Lengkap Terisi`;
+      document.getElementById('res-cheat').textContent = `${tabSwitchCount} Kali`;
+      document.getElementById('res-time').textContent = new Date().toLocaleString('id-ID');
+
+      const session = JSON.parse(localStorage.getItem('cbt_physics_xi_hots_session') || '{}');
+      session.isFinished = true;
+      localStorage.setItem('cbt_physics_xi_hots_session', JSON.stringify(session));
+
+      const completedList = JSON.parse(localStorage.getItem('cbt_completed_submissions_xi_hots') || '[]');
+      completedList.push({ name: studentData.name, nis: studentData.nis });
+      localStorage.setItem('cbt_completed_submissions_xi_hots', JSON.stringify(completedList));
+
+      sendDataToGoogleScript();
+    }
+
+    async function sendDataToGoogleScript() {
+      if (!GOOGLE_SCRIPT_WEBAPP_URL || GOOGLE_SCRIPT_WEBAPP_URL.includes("URL_GOOGLE_APPS_SCRIPT")) return;
+
+      const payload = {
+        nama: studentData.name,
+        kelas: studentData.class,
+        absen: studentData.nis,
+        paket: selectedPacketName,
+        pelanggaranTab: tabSwitchCount,
+        waktu: new Date().toISOString(),
+        jawabanTeks: textDataStore,
+        jawabanGambar: canvasDataStore
+      };
+
+      try {
+        await fetch(GOOGLE_SCRIPT_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function downloadPDFBackup() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.text("LEMBAR JAWABAN ASESMEN FISIKA KELAS XI - VEKTOR", 15, 15);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Guru Pengampu : Fadhillah Umar, S.Pd.`, 15, 21);
+      doc.text(`Nama Siswa    : ${studentData.name} | Kelas: ${studentData.class} | Absen: ${studentData.nis} | [${selectedPacketName}]`, 15, 26);
+      doc.text(`Waktu Kirim   : ${new Date().toLocaleString('id-ID')} | Status Tab: ${tabSwitchCount}x Pindah Tab`, 15, 31);
+      doc.line(15, 34, 195, 34);
+
+      let yPos = 40;
+      questions.forEach((q, idx) => {
+        if (yPos > 225) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Soal ${idx + 1} (${q.topic}):`, 15, yPos);
+        doc.setFont("helvetica", "normal");
+        doc.text(doc.splitTextToSize(q.text, 175), 15, yPos + 5);
+        yPos += 18;
+
+        doc.setFont("helvetica", "bold");
+        doc.text(`Hasil Akhir: ${textDataStore[idx] || "-"}`, 15, yPos);
+        doc.setFont("helvetica", "normal");
+        yPos += 6;
+
+        if (canvasDataStore[idx]) {
+          try {
+            doc.addImage(canvasDataStore[idx], 'PNG', 15, yPos, 120, 50);
+            yPos += 56;
+          } catch (e) {
+            yPos += 5;
+          }
+        }
+      });
+
+      doc.save(`Ujian_Vektor_XI_${studentData.name}_Absen_${studentData.nis}_${selectedPacketName}.pdf`);
+    }
+
+    // LOGIKA KALKULATOR SAINS
+    let calcExpr = "";
+    let isDeg = true;
+
+    function toggleCalculator() {
+      const modal = document.getElementById('calc-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function updateCalcDisplay(val) {
+      document.getElementById('calc-display').value = val || "0";
+      document.getElementById('calc-history').textContent = calcExpr;
+    }
+
+    function calcInput(ch) {
+      if (ch === 'rad/deg') {
+        isDeg = !isDeg;
+        document.getElementById('calc-angle-btn').textContent = isDeg ? "DEG" : "RAD";
+        return;
+      }
+      if (document.getElementById('calc-display').value === "0" && ch !== ".") {
+        calcExpr = ch;
+      } else {
+        calcExpr += ch;
+      }
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcOp(op) {
+      if (calcExpr === "" && op === '-') {
+        calcExpr = "-";
+      } else {
+        calcExpr += ` ${op} `;
+      }
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcClear() {
+      calcExpr = "";
+      updateCalcDisplay("0");
+    }
+
+    function calcBackspace() {
+      calcExpr = calcExpr.trimEnd();
+      calcExpr = calcExpr.slice(0, -1).trimEnd();
+      updateCalcDisplay(calcExpr || "0");
+    }
+
+    function calcConst(c) {
+      if (c === 'pi') calcExpr += Math.PI.toFixed(6);
+      if (c === 'e') calcExpr += Math.E.toFixed(6);
+      updateCalcDisplay(calcExpr);
+    }
+
+    function calcFunc(fn) {
+      try {
+        let current = evalSafe(calcExpr || document.getElementById('calc-display').value);
+        let res = 0;
+        if (fn === 'sin') res = isDeg ? Math.sin(current * Math.PI / 180) : Math.sin(current);
+        if (fn === 'cos') res = isDeg ? Math.cos(current * Math.PI / 180) : Math.cos(current);
+        if (fn === 'tan') res = isDeg ? Math.tan(current * Math.PI / 180) : Math.tan(current);
+        if (fn === 'ln') res = Math.log(current);
+        if (fn === 'log') res = Math.log10(current);
+        if (fn === 'sqrt') res = Math.sqrt(current);
+        if (fn === 'sqr') res = Math.pow(current, 2);
+        if (fn === 'inv') res = 1 / current;
+        if (fn === '10pow') res = Math.pow(10, current);
+        if (fn === 'pm') res = -current;
+        if (fn === 'exp') { calcExpr += "*10^"; updateCalcDisplay(calcExpr); return; }
+
+        calcExpr = String(Number(res.toFixed(8)));
+        updateCalcDisplay(calcExpr);
+      } catch (e) {
+        updateCalcDisplay("Error");
+        calcExpr = "";
+      }
+    }
+
+    function evalSafe(expr) {
+      if (!expr) return 0;
+      let sanitized = expr.replace(/\^/g, '**').replace(/×/g, '*').replace(/÷/g, '/');
+      return Function(`'use strict'; return (${sanitized})`)();
+    }
+
+    function calcEquals() {
+      try {
+        let result = evalSafe(calcExpr);
+        if (isNaN(result) || !isFinite(result)) throw new Error();
+        calcExpr = String(Number(result.toFixed(8)));
+        updateCalcDisplay(calcExpr);
+      } catch (e) {
+        updateCalcDisplay("Error");
+        calcExpr = "";
+      }
+    }
+  </script>
+</body>
+</html>
